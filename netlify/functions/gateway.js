@@ -1,4 +1,4 @@
-// netlify/functions/api.js
+// netlify/functions/gateway.js
 const authHandler = require('../../api/auth');
 const colaboradoresHandler = require('../../api/colaboradores');
 const coletoresHandler = require('../../api/coletores');
@@ -53,7 +53,7 @@ exports.handler = async (event) => {
     return { statusCode: 200, headers, body: '' };
   }
 
-  const path = event.path.replace('/.netlify/functions/api', '').replace('/api', '');
+  const path = event.path.replace('/.netlify/functions/gateway', '').replace('/api', '');
   const req = buildReq(event);
   const res = buildRes();
 
