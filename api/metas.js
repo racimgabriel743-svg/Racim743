@@ -15,7 +15,7 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({
         ok: false,
         msg: 'Action é obrigatória',
-        acoesDisponiveis: ['listar', 'criar', 'lancar', 'historico', 'excluir']
+        acoesDisponiveis: ['listar', 'listarUsuarios', 'criar', 'lancar', 'historico', 'excluir']
       });
     }
 
@@ -26,9 +26,14 @@ module.exports = async function handler(req, res) {
         return res.status(resultado.ok ? 200 : 400).json(resultado);
       }
 
+      case 'listarUsuarios': {
+        const resultado = await sheetsMetas.listarUsuarios();
+        return res.status(resultado.ok ? 200 : 400).json(resultado);
+      }
+
       case 'criar': {
-        const { usuario, atividade, tipo, metaTotal, descricao } = req.body || {};
-        const resultado = await sheetsMetas.criarMeta(usuario, atividade, tipo, metaTotal, descricao);
+        const { usuario, atividade, tipo, metaTotal, descricao, atribuidoPor } = req.body || {};
+        const resultado = await sheetsMetas.criarMeta(usuario, atividade, tipo, metaTotal, descricao, atribuidoPor);
         return res.status(resultado.ok ? 200 : 400).json(resultado);
       }
 
@@ -55,7 +60,7 @@ module.exports = async function handler(req, res) {
         return res.status(400).json({
           ok: false,
           msg: 'Ação inválida: ' + action,
-          acoesDisponiveis: ['listar', 'criar', 'lancar', 'historico', 'excluir']
+          acoesDisponiveis: ['listar', 'listarUsuarios', 'criar', 'lancar', 'historico', 'excluir']
         });
     }
   } catch (error) {
