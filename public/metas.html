@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metas & Atividades</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px}
+.container{max-width:1200px;margin:0 auto}
+.header{background:white;padding:20px 30px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,0.1);margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px}
+.header-left h1{color:#333;font-size:24px;display:flex;align-items:center;gap:10px}
+.header-left p{color:#777;font-size:13px;margin-top:4px}
+.header-right{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.user-badge{background:#f0f2ff;color:#667eea;padding:8px 16px;border-radius:20px;font-weight:600;font-size:13px;display:flex;align-items:center;gap:8px}
+.btn{padding:10px 20px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:8px}
+.btn-primary{background:#667eea;color:white}
+.btn-success{background:#28a745;color:white}
+.btn-danger{background:#dc3545;color:white}
+.btn-secondary{background:#6c757d;color:white}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn:hover{transform:translateY(-2px);box-shadow:0 4px 8px rgba(0,0,0,0.2)}
+.btn:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+.alert{padding:15px 20px;border-radius:10px;margin-bottom:20px;display:flex;align-items:center;gap:10px;animation:slideIn 0.3s}
+.alert-info{background:#d1ecf1;color:#0c5460;border-left:4px solid #17a2b8}
+.alert-success{background:#d4edda;color:#155724;border-left:4px solid #28a745}
+.alert-danger{background:#f8d7da;color:#721c24;border-left:4px solid #dc3545}
+@keyframes slideIn{from{transform:translateY(-20px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+.resumo-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;margin-bottom:20px}
+.stat-card{background:white;padding:20px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,0.1);text-align:center}
+.stat-card i{font-size:28px;color:#667eea;margin-bottom:8px}
+.stat-card .value{font-size:26px;font-weight:bold;color:#333;margin-bottom:4px}
+.stat-card .label{font-size:11px;color:#666;text-transform:uppercase;font-weight:600}
+
+.add-panel{background:white;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,0.1);margin-bottom:20px;overflow:hidden}
+.add-panel-header{padding:18px 25px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none}
+.add-panel-header h3{color:#333;font-size:16px;display:flex;align-items:center;gap:10px}
+.add-panel-header i.chevron{transition:transform 0.25s;color:#667eea}
+.add-panel-header.open i.chevron{transform:rotate(180deg)}
+.add-panel-body{max-height:0;overflow:hidden;transition:max-height 0.3s ease}
+.add-panel-body.open{max-height:400px}
+.add-panel-body-inner{padding:0 25px 25px 25px;display:grid;grid-template-columns:2fr 1fr 1fr;gap:15px;align-items:end}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group.full{grid-column:1/-1}
+.form-group label{font-size:12px;font-weight:600;color:#555;text-transform:uppercase}
+.form-group input,.form-group select,.form-group textarea{padding:10px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;font-family:inherit}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#667eea}
+
+.lista-container{background:white;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,0.1);overflow:hidden}
+.lista-header{padding:20px 25px;border-bottom:2px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center}
+.lista-header h2{color:#333;font-size:18px}
+.lista-body{padding:15px}
+.empty-state{text-align:center;padding:60px 20px;color:#999}
+.empty-state i{font-size:48px;margin-bottom:15px;color:#ccc}
+
+.meta-card{border:1px solid #eee;border-radius:12px;margin-bottom:12px;overflow:hidden;transition:box-shadow 0.2s}
+.meta-card:hover{box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+.meta-card-main{padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;cursor:pointer}
+.meta-info{flex:1;min-width:220px}
+.meta-info-top{display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap}
+.meta-info-top h4{color:#333;font-size:15px}
+.tipo-badge{font-size:10px;font-weight:700;text-transform:uppercase;padding:3px 8px;border-radius:12px}
+.tipo-hora{background:#e0ecff;color:#3457c6}
+.tipo-numero{background:#e6f7ec;color:#1e8e4f}
+.tipo-valor{background:#fff2d9;color:#b3760a}
+.status-badge{font-size:10px;font-weight:700;text-transform:uppercase;padding:3px 8px;border-radius:12px;background:#e9ecef;color:#555}
+.status-badge.concluida{background:#d4edda;color:#155724}
+.meta-progress-bar{background:#eee;border-radius:10px;height:8px;width:100%;overflow:hidden;margin-top:6px}
+.meta-progress-fill{height:100%;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:10px;transition:width 0.4s}
+.meta-progress-fill.concluida{background:linear-gradient(135deg,#28a745,#20a03e)}
+.meta-numeros{display:flex;gap:18px;font-size:12px;color:#666;margin-top:6px;flex-wrap:wrap}
+.meta-numeros b{color:#333}
+.meta-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.lancar-inline{display:flex;gap:6px;align-items:center}
+.lancar-inline input{width:90px;padding:8px 10px;border:2px solid #e0e0e0;border-radius:8px;font-size:13px}
+
+.meta-detail{max-height:0;overflow:hidden;transition:max-height 0.3s ease;background:#fafbff;border-top:1px solid #eee}
+.meta-detail.open{max-height:320px;overflow-y:auto}
+.meta-detail-inner{padding:16px 18px}
+.meta-detail-inner .desc{font-size:13px;color:#666;margin-bottom:10px;font-style:italic}
+.historico-item{display:flex;justify-content:space-between;font-size:12px;color:#555;padding:6px 0;border-bottom:1px dashed #e5e5e5}
+.historico-item:last-child{border-bottom:none}
+.historico-vazio{font-size:12px;color:#999;padding:10px 0}
+
+.loading{display:inline-block;animation:spin 1s linear infinite}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+@media(max-width:768px){
+  .header{flex-direction:column;text-align:center}
+  .add-panel-body-inner{grid-template-columns:1fr}
+  .meta-card-main{flex-direction:column;align-items:stretch}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="header-left">
+      <h1><i class="fas fa-bullseye"></i> Metas &amp; Atividades</h1>
+      <p>Cadastre atividades e lance o que foi realizado — a meta vai sendo subtraída dia a dia</p>
+    </div>
+    <div class="header-right">
+      <div class="user-badge"><i class="fas fa-user"></i> <span id="userName">Carregando...</span></div>
+      <button class="btn btn-secondary" onclick="voltar()"><i class="fas fa-arrow-left"></i> Voltar</button>
+    </div>
+  </div>
+
+  <div id="statusDiv"></div>
+
+  <div class="resumo-cards" id="resumoCards">
+    <div class="stat-card"><i class="fas fa-list-check"></i><div class="value" id="statTotal">0</div><div class="label">Atividades</div></div>
+    <div class="stat-card"><i class="fas fa-check-circle"></i><div class="value" id="statConcluidas">0</div><div class="label">Concluídas</div></div>
+    <div class="stat-card"><i class="fas fa-spinner"></i><div class="value" id="statAndamento">0</div><div class="label">Em andamento</div></div>
+    <div class="stat-card"><i class="fas fa-chart-line"></i><div class="value" id="statRealizado">0</div><div class="label">Total realizado</div></div>
+  </div>
+
+  <div class="add-panel">
+    <div class="add-panel-header" id="addPanelHeader" onclick="toggleAddPanel()">
+      <h3><i class="fas fa-plus-circle"></i> Nova Atividade / Meta</h3>
+      <i class="fas fa-chevron-down chevron"></i>
+    </div>
+    <div class="add-panel-body" id="addPanelBody">
+      <div class="add-panel-body-inner">
+        <div class="form-group full">
+          <label>Nome da atividade</label>
+          <input type="text" id="novaAtividade" placeholder="Ex: Separar pedidos, Ligações, Meta de vendas...">
+        </div>
+        <div class="form-group">
+          <label>Tipo da meta</label>
+          <select id="novoTipo">
+            <option value="numero">Número (quantidade)</option>
+            <option value="hora">Hora</option>
+            <option value="valor">Valor (R$)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Meta total</label>
+          <input type="number" id="novaMetaTotal" placeholder="Ex: 100" min="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <button class="btn btn-success" style="width:100%;justify-content:center" onclick="criarMeta()" id="btnCriarMeta">
+            <i class="fas fa-save"></i> Adicionar
+          </button>
+        </div>
+        <div class="form-group full">
+          <label>Descrição (opcional)</label>
+          <textarea id="novaDescricao" rows="2" placeholder="Detalhes da atividade..."></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lista-container">
+    <div class="lista-header">
+      <h2><i class="fas fa-clipboard-list"></i> Minhas Atividades</h2>
+      <button class="btn btn-primary btn-sm" onclick="carregarMetas()"><i class="fas fa-sync-alt"></i> Atualizar</button>
+    </div>
+    <div class="lista-body" id="listaBody">
+      <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Carregando atividades...</p></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const API_BASE = window.location.origin;
+const usuario = sessionStorage.getItem('usuario');
+let metasCache = [];
+let historicoAbertoId = null;
+
+function showStatus(message, type = 'info') {
+  const statusEl = document.getElementById('statusDiv');
+  statusEl.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+  setTimeout(() => { statusEl.innerHTML = ''; }, 4000);
+}
+
+function formatarValor(tipo, valor) {
+  const v = Number(valor) || 0;
+  if (tipo === 'hora') return v.toLocaleString('pt-BR', {maximumFractionDigits: 2}) + 'h';
+  if (tipo === 'valor') return v.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+  return v.toLocaleString('pt-BR', {maximumFractionDigits: 2}) + ' un';
+}
+
+function labelTipo(tipo) {
+  return tipo === 'hora' ? 'Hora' : (tipo === 'valor' ? 'Valor' : 'Número');
+}
+
+function toggleAddPanel() {
+  document.getElementById('addPanelHeader').classList.toggle('open');
+  document.getElementById('addPanelBody').classList.toggle('open');
+}
+
+function voltar() {
+  window.location.href = '/ferramentas';
+}
+
+async function carregarMetas() {
+  if (!usuario) return;
+  const lista = document.getElementById('listaBody');
+  lista.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Carregando atividades...</p></div>';
+
+  try {
+    const resp = await fetch(`${API_BASE}/api/metas?action=listar&usuario=${encodeURIComponent(usuario)}`);
+    const result = await resp.json();
+
+    if (!result.ok) {
+      lista.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>${result.msg || 'Erro ao carregar atividades'}</p></div>`;
+      return;
+    }
+
+    metasCache = result.dados || [];
+    atualizarResumo(result.resumo || {});
+    renderizarLista();
+  } catch (error) {
+    console.error(error);
+    lista.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Erro de conexão ao carregar atividades</p></div>';
+  }
+}
+
+function atualizarResumo(resumo) {
+  document.getElementById('statTotal').textContent = resumo.totalAtividades || 0;
+  document.getElementById('statConcluidas').textContent = resumo.concluidas || 0;
+  document.getElementById('statAndamento').textContent = resumo.emAndamento || 0;
+  document.getElementById('statRealizado').textContent = (resumo.totalRealizado || 0).toLocaleString('pt-BR', {maximumFractionDigits: 2});
+}
+
+function renderizarLista() {
+  const lista = document.getElementById('listaBody');
+
+  if (!metasCache.length) {
+    lista.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>Nenhuma atividade cadastrada ainda. Use o campo acima para adicionar.</p></div>';
+    return;
+  }
+
+  lista.innerHTML = metasCache.map(m => {
+    const concluida = m.status === 'Concluída';
+    return `
+    <div class="meta-card" data-id="${m.id}">
+      <div class="meta-card-main" onclick="toggleDetalhe('${m.id}')">
+        <div class="meta-info">
+          <div class="meta-info-top">
+            <h4>${m.atividade}</h4>
+            <span class="tipo-badge tipo-${m.tipo}">${labelTipo(m.tipo)}</span>
+            <span class="status-badge ${concluida ? 'concluida' : ''}">${m.status}</span>
+          </div>
+          <div class="meta-progress-bar"><div class="meta-progress-fill ${concluida ? 'concluida' : ''}" style="width:${m.percentual}%"></div></div>
+          <div class="meta-numeros">
+            <span>Meta: <b>${formatarValor(m.tipo, m.metaTotal)}</b></span>
+            <span>Realizado: <b>${formatarValor(m.tipo, m.realizado)}</b></span>
+            <span>Restante: <b>${formatarValor(m.tipo, m.restante)}</b></span>
+            <span>${m.percentual}%</span>
+          </div>
+        </div>
+        <div class="meta-actions" onclick="event.stopPropagation()">
+          <div class="lancar-inline">
+            <input type="number" min="0" step="0.01" placeholder="Qtd hoje" id="lancar-${m.id}" ${concluida ? 'disabled' : ''}>
+            <button class="btn btn-primary btn-sm" ${concluida ? 'disabled' : ''} onclick="lancarProgresso('${m.id}')"><i class="fas fa-check"></i> Lançar</button>
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="excluirMeta('${m.id}')"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+      <div class="meta-detail" id="detalhe-${m.id}">
+        <div class="meta-detail-inner">
+          ${m.descricao ? `<div class="desc"><i class="fas fa-info-circle"></i> ${m.descricao}</div>` : ''}
+          <div id="historico-${m.id}"><div class="historico-vazio">Carregando histórico...</div></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function toggleDetalhe(id) {
+  const detalhe = document.getElementById(`detalhe-${id}`);
+  const jaAberto = detalhe.classList.contains('open');
+
+  document.querySelectorAll('.meta-detail.open').forEach(el => el.classList.remove('open'));
+
+  if (jaAberto) {
+    historicoAbertoId = null;
+    return;
+  }
+
+  detalhe.classList.add('open');
+  historicoAbertoId = id;
+  await carregarHistorico(id);
+}
+
+async function carregarHistorico(id) {
+  const container = document.getElementById(`historico-${id}`);
+  try {
+    const resp = await fetch(`${API_BASE}/api/metas?action=historico&usuario=${encodeURIComponent(usuario)}&id=${encodeURIComponent(id)}`);
+    const result = await resp.json();
+
+    if (!result.ok || !result.dados || !result.dados.length) {
+      container.innerHTML = '<div class="historico-vazio">Nenhum lançamento registrado ainda.</div>';
+      return;
+    }
+
+    container.innerHTML = result.dados.map(h => `
+      <div class="historico-item">
+        <span><i class="fas fa-calendar-day"></i> ${h.dataHora}</span>
+        <span><b>+${h.quantidade.toLocaleString('pt-BR', {maximumFractionDigits: 2})}</b>${h.observacao ? ' — ' + h.observacao : ''}</span>
+      </div>
+    `).join('');
+  } catch (error) {
+    container.innerHTML = '<div class="historico-vazio">Erro ao carregar histórico.</div>';
+  }
+}
+
+async function criarMeta() {
+  const atividade = document.getElementById('novaAtividade').value.trim();
+  const tipo = document.getElementById('novoTipo').value;
+  const metaTotal = document.getElementById('novaMetaTotal').value;
+  const descricao = document.getElementById('novaDescricao').value.trim();
+  const btn = document.getElementById('btnCriarMeta');
+
+  if (!atividade) { showStatus('Informe o nome da atividade', 'danger'); return; }
+  if (!metaTotal || Number(metaTotal) <= 0) { showStatus('Informe uma meta válida (maior que zero)', 'danger'); return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner loading"></i> Salvando...';
+
+  try {
+    const resp = await fetch(`${API_BASE}/api/metas`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'criar', usuario, atividade, tipo, metaTotal, descricao })
+    });
+    const result = await resp.json();
+
+    if (result.ok) {
+      showStatus('Atividade adicionada com sucesso!', 'success');
+      document.getElementById('novaAtividade').value = '';
+      document.getElementById('novaMetaTotal').value = '';
+      document.getElementById('novaDescricao').value = '';
+      await carregarMetas();
+    } else {
+      showStatus(result.msg || 'Erro ao adicionar atividade', 'danger');
+    }
+  } catch (error) {
+    showStatus('Erro de conexão ao adicionar atividade', 'danger');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-save"></i> Adicionar';
+  }
+}
+
+async function lancarProgresso(id) {
+  const input = document.getElementById(`lancar-${id}`);
+  const quantidade = input.value;
+
+  if (!quantidade || Number(quantidade) <= 0) { showStatus('Informe uma quantidade válida', 'danger'); return; }
+
+  try {
+    const resp = await fetch(`${API_BASE}/api/metas`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'lancar', usuario, id, quantidade })
+    });
+    const result = await resp.json();
+
+    if (result.ok) {
+      showStatus('Progresso lançado! Meta atualizada.', 'success');
+      await carregarMetas();
+      if (historicoAbertoId === id) {
+        const detalhe = document.getElementById(`detalhe-${id}`);
+        if (detalhe) { detalhe.classList.add('open'); carregarHistorico(id); }
+      }
+    } else {
+      showStatus(result.msg || 'Erro ao lançar progresso', 'danger');
+    }
+  } catch (error) {
+    showStatus('Erro de conexão ao lançar progresso', 'danger');
+  }
+}
+
+async function excluirMeta(id) {
+  if (!confirm('Deseja realmente excluir esta atividade?')) return;
+
+  try {
+    const resp = await fetch(`${API_BASE}/api/metas`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'excluir', usuario, id })
+    });
+    const result = await resp.json();
+
+    if (result.ok) {
+      showStatus('Atividade removida.', 'success');
+      await carregarMetas();
+    } else {
+      showStatus(result.msg || 'Erro ao excluir atividade', 'danger');
+    }
+  } catch (error) {
+    showStatus('Erro de conexão ao excluir atividade', 'danger');
+  }
+}
+
+window.onload = function () {
+  if (!usuario) {
+    showStatus('Sessão não encontrada. Redirecionando para login...', 'danger');
+    setTimeout(() => { window.location.href = '/'; }, 1500);
+    return;
+  }
+  document.getElementById('userName').textContent = usuario;
+  carregarMetas();
+};
+</script>
+</body>
+</html>
