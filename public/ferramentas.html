@@ -438,6 +438,24 @@
                 </button>
             </div>
 
+            <!-- Metas & Atividades - NOVO -->
+            <div class="tool-card" onclick="abrirFerramenta('metas')">
+                <span class="badge badge-new">Novo</span>
+                <div class="tool-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                    <i class="fas fa-bullseye"></i>
+                </div>
+                <h3>Metas &amp; Atividades</h3>
+                <p>Cadastre atividades e metas (hora, número ou valor) e lance o realizado dia a dia.</p>
+                <ul class="tool-features">
+                    <li><i class="fas fa-check"></i> Metas por usuário logado</li>
+                    <li><i class="fas fa-check"></i> Lançamento diário que subtrai da meta</li>
+                    <li><i class="fas fa-check"></i> Histórico de lançamentos por atividade</li>
+                </ul>
+                <button class="btn btn-primary">
+                    <i class="fas fa-arrow-right"></i> Abrir Metas
+                </button>
+            </div>
+
             <!-- controle-coletores -->
             <div class="tool-card" onclick="abrirFerramenta('controle-coletores')">
                 <span class="badge badge-popular">Operacional</span>
@@ -539,7 +557,8 @@
                 'mapacarga': '/mapacarga',
                 'alocacaobox': '/alocacaobox',
                 'resumo-equipamentos': '/resumo-equipamentos', 
-                'controle-coletores': '/controle-coletores'
+                'controle-coletores': '/controle-coletores',
+                'metas': '/metas'
             };
             
             const mensagens = {
@@ -550,7 +569,8 @@
                 'mapacarga': 'Abrindo Mapa de Carga...',
                 'alocacaobox': 'Abrindo Alocação BOX...',
                 'controle-coletores': 'Abrindo Gestão de controle de Equipamentos...',
-                'resumo-equipamentos': 'Abrindo Resumo de Equipamentos...'
+                'resumo-equipamentos': 'Abrindo Resumo de Equipamentos...',
+                'metas': 'Abrindo Metas & Atividades...'
             };
 
             const nomesFerramenta = {
@@ -561,7 +581,8 @@
                 'mapacarga': 'Mapa de Carga',
                 'alocacaobox': 'Alocação BOX',
                 'controle-coletores': 'Controle de Equipamentos',
-                'resumo-equipamentos': 'Resumo de Equipamentos'
+                'resumo-equipamentos': 'Resumo de Equipamentos',
+                'metas': 'Metas & Atividades'
             };
             
             if (!destinos[ferramenta]) {
