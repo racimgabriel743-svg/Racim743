@@ -277,7 +277,8 @@
                 'Alocação BOX': 'fas fa-warehouse',
                 'Coletores': 'fas fa-mobile-alt',
                 'Resumo equipamentos': 'fas fa-mobile-alt',
-                'default': 'fas fa-building'
+                'default': 'fas fa-building',
+                'balanca': 'fas fa-mobile-alt'
             };
             
             areasSelecionadas.forEach(area => {
@@ -357,6 +358,9 @@
                 } else if (areaLower.includes('painel equipamentos') || areaLower.includes('rfid')) {
                     window.location.href = '/resumo-equipamentos';
                 } 
+                } else if (areaLower.includes('Balanca') || areaLower.includes('rfid')) {
+                    window.location.href = '/Balanca';
+                }
                     
                 // Áreas com múltiplas ferramentas
                 else {
