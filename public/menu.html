@@ -278,7 +278,7 @@
                 'Coletores': 'fas fa-mobile-alt',
                 'Balanca': 'fas fa-mobile-alt',
                 'Resumo equipamentos': 'fas fa-mobile-alt',
-                'default': 'fas fa-building',
+                'default': 'fas fa-building'
             };
             
             areasSelecionadas.forEach(area => {
@@ -357,7 +357,6 @@
                     window.location.href = '/avaria';                    
                 } else if (areaLower.includes('painel equipamentos') || areaLower.includes('rfid')) {
                     window.location.href = '/resumo-equipamentos';
-                } 
                 } else if (areaLower.includes('Balanca') || areaLower.includes('rfid')) {
                     window.location.href = '/Balanca';
                 }
