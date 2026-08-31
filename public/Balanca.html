@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balança e Impressoras</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/checklist.css">
+    <meta name="theme-color" content="#1e293b">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <div class="header-left">
+        <a href="menu.html" class="back-btn">← Voltar</a>
+        <div class="header-title">
+        </div>
+    </div>
+    <div class="user-info">
+        <span class="user-badge" id="userBadge">Operador</span>
+    </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+    <!-- HERO -->
+    <div class="hero-card">
+        <h1>Balanças e Impressoras</h1>
+        <p>Relatorio de Balança e impressora</p>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="progress-wrap">
+        <div class="progress-text" id="progressPercent">0%</div>
+        <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progressBar"></div>
+        </div>
+        <div class="progress-label" id="progressLabel">0 / 0 campos</div>
+    </div>
+
+    <!-- ALERT -->
+    <div class="alert" id="alertBox"></div>
+
+        <!-- INSPEÇÃO VISUAL GERAL -->
+        <div class="section-divider">
+            <div class="section-divider-line"></div>
+            <div class="section-label">Alguma balança Divergente?</div>
+            <div class="section-divider-line"></div>
+        </div>
+  
+  <!-- Cadastro de balanças-->
+  
+        <div class="form-card" id="card_q1">
+            <span class="check-icon">✓</span>
+            <label class="main-label">Balança Rua 34</label>
+            <div class="radio-group">
+                <div class="radio-option sim">
+                    <input type="radio" name="q1" id="q1_sim" value="Sim">
+                    <label for="q1_sim">OK</label>
+                </div>
+                <div class="radio-option nao">
+                    <input type="radio" name="q1" id="q1_nao" value="Não">
+                    <label for="q1_nao">Divergente</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card" id="card_q2">
+            <span class="check-icon">✓</span>
+            <label class="main-label">Balança Rua 53</label>
+            <div class="radio-group">
+                <div class="radio-option nao">
+                    <input type="radio" name="q2" id="q2_sim" value="Sim">
+                    <label for="q2_sim">✅ Sim</label>
+                </div>
+                <div class="radio-option sim">
+                    <input type="radio" name="q2" id="q2_nao" value="Não">
+                    <label for="q2_nao">⚠️ Não</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card" id="card_q3">
+            <span class="check-icon">✓</span>
+            <label class="main-label">Balança Rua 21</label>
+            <div class="radio-group">
+                <div class="radio-option sim">
+                    <input type="radio" name="q3" id="q3_sim" value="Sim">
+                    <label for="q3_sim">⚠️ Sim</label>
+                </div>
+                <div class="radio-option nao">
+                    <input type="radio" name="q3" id="q3_nao" value="Não">
+                    <label for="q3_nao">✅ Não</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card" id="card_q4">
+            <span class="check-icon">✓</span>
+            <label class="main-label">Balança Rua 17</label>
+            <div class="radio-group">
+                <div class="radio-option sim">
+                    <input type="radio" name="q4" id="q4_sim" value="Sim">
+                    <label for="q4_sim">⚠️ Sim</label>
+                </div>
+                <div class="radio-option nao">
+                    <input type="radio" name="q4" id="q4_nao" value="Não">
+                    <label for="q4_nao">✅ Não</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card" id="card_q5">
+            <span class="check-icon">✓</span>
+            <label class="main-label">Balança Rua 13</label>
+            <div class="radio-group">
+                <div class="radio-option sim">
+                    <input type="radio" name="q5" id="q5_sim" value="Sim">
+                    <label for="q5_sim">⚠️ Sim</label>
+                </div>
+                <div class="radio-option nao">
+                    <input type="radio" name="q5" id="q5_nao" value="Não">
+                    <label for="q5_nao">✅ Não</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card" id="card_q6">
+            <span class="check-icon">✓</span>
+            <label class="main-label">Balança Rua 07</label>
+            <div class="radio-group">
+                <div class="radio-option nao">
+                    <input type="radio" name="q6" id="q6_sim" value="Sim">
+                    <label for="q6_sim">✅ Sim</label>
+                </div>
+                <div class="radio-option sim">
+                    <input type="radio" name="q6" id="q6_nao" value="Não">
+                    <label for="q6_nao">⚠️ Não</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Impressoras-->
+        <div class="section-divider">
+            <div class="section-divider-line"></div>
+            <div class="section-label"> Alguma impresora divergente?</div>
+            <div class="section-divider-line"></div>
+        </div>
+  
+        <div class="form-card" id="card_q7">
+            <span class="check-icon">✓</span>
+            <label class="main-label">Impressora Rua 34</label>
+            <div class="radio-group">
+                <div class="radio-option nao">
+                    <input type="radio" name="q7" id="q7_sim" value="Sim">
+                    <label for="q7_sim">✅ Sim</label>
+                </div>
+                <div class="radio-option sim">
+                    <input type="radio" name="q7" id="q7_nao" value="Não">
+                    <label for="q7_nao">⚠️ Não</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card" id="card_q8">
+            <span class="check-icon">✓</span>
+            <label class="main-label">Impressora Rua 53</label>
+            <div class="radio-group">
+                <div class="radio-option nao">
+                    <input type="radio" name="q8" id="q8_sim" value="Sim">
+                    <label for="q8_sim">✅ Sim</label>
+                </div>
+                <div class="radio-option sim">
+                    <input type="radio" name="q8" id="q8_nao" value="Não">
+                    <label for="q8_nao">⚠️ Não</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card" id="card_q9">
+            <span class="check-icon">✓</span>
+            <label class="main-label">Impressora Rua 54</label>
+            <div class="radio-group">
+                <div class="radio-option nao">
+                    <input type="radio" name="q9" id="q9_sim" value="Sim">
+                    <label for="q9_sim">✅ Sim</label>
+                </div>
+                <div class="radio-option sim">
+                    <input type="radio" name="q9" id="q9_nao" value="Não">
+                    <label for="q9_nao">⚠️ Não</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card" id="card_q10">
+            <span class="check-icon">✓</span>
+            <label class="main-label">Impressora Rua 21</label>
+            <div class="radio-group">
+                <div class="radio-option nao">
+                    <input type="radio" name="q10" id="q10_sim" value="Sim">
+                    <label for="q10_sim">✅ Sim</label>
+                </div>
+                <div class="radio-option sim">
+                    <input type="radio" name="q10" id="q10_nao" value="Não">
+                    <label for="q10_nao">⚠️ Não</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card" id="card_q11">
+            <span class="check-icon">✓</span>
+            <label class="main-label">Impressora Rua 17</label>
+            <div class="radio-group">
+                <div class="radio-option nao">
+                    <input type="radio" name="q11" id="q11_sim" value="Sim">
+                    <label for="q11_sim">✅ Sim</label>
+                </div>
+                <div class="radio-option sim">
+                    <input type="radio" name="q11" id="q11_nao" value="Não">
+                    <label for="q11_nao">⚠️ Não</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card" id="card_q12">
+            <span class="check-icon">✓</span>
+            <label class="main-label">Impressora Rua 13</label>
+            <div class="radio-group">
+                <div class="radio-option nao">
+                    <input type="radio" name="q12" id="q12_sim" value="Sim">
+                    <label for="q12_sim">✅ Sim</label>
+                </div>
+                <div class="radio-option sim">
+                    <input type="radio" name="q12" id="q12_nao" value="Não">
+                    <label for="q12_nao">⚠️ Não</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card" id="card_q14">
+            <span class="check-icon">✓</span>
+            <label class="main-label">Impressora Rua 07</label>
+            <div class="radio-group">
+                <div class="radio-option nao">
+                    <input type="radio" name="q14" id="q14_sim" value="Sim">
+                    <label for="q14_sim">✅ Sim</label>
+                </div>
+                <div class="radio-option sim">
+                    <input type="radio" name="q14" id="q14_nao" value="Não">
+                    <label for="q14_nao">⚠️ Não</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card" id="card_q15">
+            <span class="check-icon">✓</span>
+            <label class="main-label">Impressora Rec Mesa</label>
+            <div class="radio-group">
+                <div class="radio-option nao">
+                    <input type="radio" name="q15" id="q15_sim" value="Sim">
+                    <label for="q15_sim">✅ Sim</label>
+                </div>
+                <div class="radio-option sim">
+                    <input type="radio" name="q15" id="q15_nao" value="Não">
+                    <label for="q15_nao">⚠️ Não</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card" id="card_q16">
+            <span class="check-icon">✓</span>
+            <label class="main-label">Impressora Rec doca 2</label>
+            <div class="radio-group">
+                <div class="radio-option nao">
+                    <input type="radio" name="q16" id="q16_sim" value="Sim">
+                    <label for="q16_sim">✅ Sim</label>
+                </div>
+                <div class="radio-option sim">
+                    <input type="radio" name="q16" id="q16_nao" value="Não">
+                    <label for="q16_nao">⚠️ Não</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card" id="card_q17">
+            <span class="check-icon">✓</span>
+            <label class="main-label">Impressora Rec doca 8</label>
+            <div class="radio-group">
+                <div class="radio-option nao">
+                    <input type="radio" name="q17" id="q17_sim" value="Sim">
+                    <label for="q17_sim">✅ Sim</label>
+                </div>
+                <div class="radio-option sim">
+                    <input type="radio" name="q17" id="q17_nao" value="Não">
+                    <label for="q17_nao">⚠️ Não</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card" id="card_q18">
+            <span class="check-icon">✓</span>
+            <label class="main-label">Impressora Rec doca 12</label>
+            <div class="radio-group">
+                <div class="radio-option nao">
+                    <input type="radio" name="q18" id="q18_sim" value="Sim">
+                    <label for="q18_sim">✅ Sim</label>
+                </div>
+                <div class="radio-option sim">
+                    <input type="radio" name="q18" id="q18_nao" value="Não">
+                    <label for="q18_nao">⚠️ Não</label>
+                </div>
+            </div>
+        </div>
+
+          <div class="form-card" id="card_q19">
+            <span class="check-icon">✓</span>
+            <label class="main-label">Impressora Rec doca 15</label>
+            <div class="radio-group">
+                <div class="radio-option nao">
+                    <input type="radio" name="q18" id="q18_sim" value="Sim">
+                    <label for="q18_sim">✅ Sim</label>
+                </div>
+                <div class="radio-option sim">
+                    <input type="radio" name="q18" id="q18_nao" value="Não">
+                    <label for="q18_nao">⚠️ Não</label>
+                </div>
+            </div>
+        </div>
+
+          <div class="form-card" id="card_q20">
+            <span class="check-icon">✓</span>
+            <label class="main-label">Impressora Rec doca 19</label>
+            <div class="radio-group">
+                <div class="radio-option nao">
+                    <input type="radio" name="q18" id="q18_sim" value="Sim">
+                    <label for="q18_sim">✅ Sim</label>
+                </div>
+                <div class="radio-option sim">
+                    <input type="radio" name="q18" id="q18_nao" value="Não">
+                    <label for="q18_nao">⚠️ Não</label>
+                </div>
+            </div>
+        </div>
+
+          <div class="form-card" id="card_q21">
+            <span class="check-icon">✓</span>
+            <label class="main-label">Impressora Rec doca 22</label>
+            <div class="radio-group">
+                <div class="radio-option nao">
+                    <input type="radio" name="q18" id="q18_sim" value="Sim">
+                    <label for="q18_sim">✅ Sim</label>
+                </div>
+                <div class="radio-option sim">
+                    <input type="radio" name="q18" id="q18_nao" value="Não">
+                    <label for="q18_nao">⚠️ Não</label>
+                </div>
+            </div>
+        </div>
+
+          <div class="comments-section">
+            <div class="comments-header">
+                <h3>💬 Comentários</h3>
+                <span class="comments-count" id="commentsCount">0</span>
+            </div>
+            <div class="comment-form">
+                <textarea id="commentText" placeholder="Adicione um comentário, atualização ou observação..." maxlength="1000"></textarea>
+                <div id="commentImgsPreview" class="comment-images-preview"></div>
+                <div class="comment-form-footer">
+                    <label class="comment-attach-btn">📷 Anexar Fotos
+                        <input type="file" accept="image/*" multiple style="display:none" onchange="handleCommentImg(event)">
+                    </label>
+                    <button class="btn" onclick="enviarComentario()">Enviar Comentário</button>
+                </div>
+            </div>
+            <div class="comments-list" id="commentsList"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="fecharModal()">Fechar</button>
+            <button class="btn btn-warning" id="btnToggleEdit" style="display:none" onclick="toggleEdit()">✏️ Editar</button>
+            <button class="btn btn-success"  id="btnSalvarEdit" style="display:none" onclick="salvarEdicao()">💾 Salvar Alterações</button>
+        </div>
+
+        <!-- SUBMIT -->
+        <div class="submit-area">
+            <button type="submit" class="btn-submit" id="btnSubmit">
+                <span>📋</span> Enviar Checklkist
+            </button>
+            <button type="button" class="btn-clear" onclick="limparFormulario()">
+                ↺ Limpar formulário
+            </button>
+        </div>
+
+    </form>
+
+
+<script>
+
+  
+const PERGUNTAS = {
+    q1:  'Balança Rua 34',
+    q2:  'Balança Rua 53',
+    q3:  'Balança Rua 21',
+    q4:  'Balança Rua 17',
+    q5:  'Balança Rua 13',
+    q6:  'Balança Rua 07',
+    q7:  'Impressora Rua 34',
+    q8:  'Impressora Rua 53',
+    q9:  'Impressora Rua 54',
+    q10: 'Impressora Rua 21',
+    q11: 'Impressora Rua 17',
+    q12: 'Impressora Rua 13',
+    q14: 'Impressora Rua 07',
+    q15: 'Impressora REC Mesa',
+    q16: 'Impressora REC Doca 2',
+    q17: 'Impressora REC Doca 8',
+    q18: 'Impressora REC Doca 12',
+    q19: 'Impressora REC Doca 15',
+    q20: 'Impressora REC Doca 19',
+    q21: 'Impressora REC Doca 22',
+  
+};
+
+const ALERTA_NAO = ['q1','q3','q4','q5','q2','q6','q7','q8','q9','q10','q11','q12','q14','q15','q16','q17','q18'];
+
+function isProblema(key, value) {
+    if (ALERTA_NAO.includes(key) && value === 'Não') return true;
+    return false;
+
+
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof window.supabase !== 'undefined') {
+        db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    }
+
+    const saved = localStorage.getItem('currentUser');
+    if (saved) {
+        currentUser = JSON.parse(saved);
+        document.getElementById('userBadge').textContent = currentUser.nome || 'Operador';
+        document.getElementById('operador').value = currentUser.nome || '';
+        atualizarCard('operador', document.getElementById('operador'));
+        window.notifInit?.();
+        window.pushInit?.();
+    } else {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    const now = new Date();
+    document.getElementById('data').value = now.toISOString().split('T')[0];
+    document.getElementById('hora').value = now.toTimeString().slice(0,5);
+    atualizarCard('data', document.getElementById('data'));
+    atualizarCard('hora', document.getElementById('hora'));
+
+    setupListeners();
+    atualizarProgresso();
+    carregarHistorico();
+});
+
+// ── LISTENERS ──
+function setupListeners() {
+    const form = document.getElementById('checklistForm');
+
+    form.querySelectorAll('input[type="text"], input[type="date"], input[type="time"], input[type="number"]').forEach(input => {
+        input.addEventListener('input', () => {
+            atualizarCard(input.name || input.id, input);
+            atualizarProgresso();
+        });
+    });
+
+    form.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            atualizarCard(radio.name, radio);
+            atualizarProgresso();
+        });
+    });
+
+    form.querySelectorAll('input[name="turno"]').forEach(r => {
+        r.addEventListener('change', () => {
+            atualizarCard('turno', r);
+            atualizarProgresso();
+        });
+    });
+
+    form.addEventListener('submit', enviarChecklist);
+}
+
+function atualizarCard(fieldName, el) {
+    const cardId = 'card_' + fieldName;
+    const card = document.getElementById(cardId);
+    if (!card) return;
+    const filled = el.value && el.value.trim() !== '';
+    card.classList.toggle('answered', filled);
+}
+
+// ── PROGRESS ──
+// Agora são 25 campos: 7 identificação + 18 perguntas
+function atualizarProgresso() {
+    const form = document.getElementById('checklistForm');
+    const totalCampos = 25;
+    let preenchidos = 0;
+
+    ['operador','matricula','numero_maquina','horimetro','data','hora'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.value.trim()) preenchidos++;
+    });
+
+    if (form.querySelector('input[name="turno"]:checked')) preenchidos++;
+
+    for (let i = 1; i <= 18; i++) {
+        if (form.querySelector(`input[name="q${i}"]:checked`)) preenchidos++;
+    }
+
+    const pct = Math.round((preenchidos / totalCampos) * 100);
+    document.getElementById('progressPercent').textContent = pct + '%';
+    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = `${preenchidos} / ${totalCampos} campos`;
+}
+
+// ── SUBMIT ──
+async function enviarChecklist(e) {
+    e.preventDefault();
+
+    const form = document.getElementById('checklistForm');
+    const btn  = document.getElementById('btnSubmit');
+
+    let missing = [];
+    for (let i = 1; i <= 18; i++) {
+        if (!form.querySelector(`input[name="q${i}"]:checked`)) {
+            missing.push(i);
+        }
+    }
+    if (!form.querySelector('input[name="turno"]:checked')) {
+        mostrarAlerta('Por favor, selecione o turno.', 'error');
+        return;
+    }
+    if (missing.length > 0) {
+        mostrarAlerta(`Por favor, responda todas as perguntas. Faltam ${missing.length} resposta(s).`, 'error');
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span style="animation:spin 0.8s linear infinite;display:inline-block">⏳</span> Enviando...';
+
+    const respostas = {};
+    for (let i = 1; i <= 18; i++) {
+        respostas[`q${i}`] = form.querySelector(`input[name="q${i}"]:checked`)?.value || '';
+    }
+
+    const payload = {
+        operador:       document.getElementById('operador').value.trim(),
+        matricula:      document.getElementById('matricula').value.trim(),
+        numero_maquina: document.getElementById('numero_maquina').value.trim(),
+        turno:          form.querySelector('input[name="turno"]:checked')?.value || '',
+        horimetro:      document.getElementById('horimetro').value,
+        data:           document.getElementById('data').value,
+        hora:           document.getElementById('hora').value,
+        usuario_id:     currentUser?.id || null,
+        respostas:      respostas
+    };
+
+    payload.total_problemas = Object.entries(respostas).filter(([k, v]) => isProblema(k, v)).length;
+
+    try {
+        if (db) {
+            const { error } = await db.from('checklist_diario').insert([payload]);
+            if (error) throw error;
+        } else {
+            const existing = JSON.parse(localStorage.getItem('checklists') || '[]');
+            existing.unshift({ ...payload, id: Date.now(), created_at: new Date().toISOString() });
+            localStorage.setItem('checklists', JSON.stringify(existing.slice(0, 50)));
+        }
+
+        mostrarAlerta('✅ Check-list enviado com sucesso!', 'success');
+
+        // Notificação automática
+        if (payload.total_problemas > 0) {
+            await notificar('checklist_problema',
+                `⚠️ Check-list com ${payload.total_problemas} problema(s)`,
+                `Operador: ${payload.operador} | Máquina: ${payload.numero_maquina} | Turno: ${payload.turno}.`,
+                'checklist-painel.html');
+        } else {
+            await notificar('checklist_problema',
+                `✅ Check-list enviado`,
+                `Operador: ${payload.operador} | Máquina: ${payload.numero_maquina} | Sem problemas.`,
+                'checklist-painel.html');
+        }
+
+        form.reset();
+
+        document.getElementById('operador').value = currentUser?.nome || '';
+        const now = new Date();
+        document.getElementById('data').value = now.toISOString().split('T')[0];
+        document.getElementById('hora').value = now.toTimeString().slice(0,5);
+
+        document.querySelectorAll('.form-card.answered').forEach(c => c.classList.remove('answered'));
+        atualizarProgresso();
+        carregarHistorico();
+
+    } catch (err) {
+        console.error(err);
+        mostrarAlerta('Erro ao enviar check-list: ' + (err.message || err), 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>📋</span> Enviar Check-list';
+    }
+}
+
+// ── HISTÓRICO ──
+async function carregarHistorico() {
+    const lista = document.getElementById('historicoLista');
+    lista.innerHTML = '<div class="spinner"></div>';
+
+    try {
+        let data = [];
+
+        if (db) {
+            const res = await db
+                .from('checklist_diario')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(30);
+            if (res.error) throw res.error;
+            data = res.data || [];
+        } else {
+            data = JSON.parse(localStorage.getItem('checklists') || '[]');
+        }
+
+        if (!data.length) {
+            lista.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><p>Nenhum check-list registrado ainda.</p></div>';
+            return;
+        }
+
+        lista.innerHTML = data.map(item => {
+            const dt = new Date(item.created_at || item.data).toLocaleString('pt-BR');
+            const prob = item.total_problemas || 0;
+            const maquina = item.numero_maquina ? `<span class="meta-tag">🏭 Máq. ${item.numero_maquina}</span>` : '';
+            return `
+                <div class="history-card" onclick="verDetalhes(${JSON.stringify(JSON.stringify(item))})">
+                    <div class="history-top">
+                        <div class="history-operator">👤 ${item.operador}</div>
+                        <div class="history-date">${dt}</div>
+                    </div>
+                    <div class="history-meta">
+                        <span class="meta-tag">Turno ${item.turno}</span>
+                        ${maquina}
+                        <span class="meta-tag">Horímetro: ${item.horimetro}</span>
+                        ${prob > 0
+                            ? `<span class="meta-tag danger">⚠️ ${prob} problema(s)</span>`
+                            : `<span class="meta-tag success">✅ Sem problemas</span>`}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+    } catch (err) {
+        console.error(err);
+        lista.innerHTML = '<div class="loading-text">Erro ao carregar histórico.</div>';
+    }
+}
+
+// ── DETALHES MODAL ──
+function verDetalhes(jsonStr) {
+    const item = JSON.parse(jsonStr);
+    const dt = new Date(item.created_at || item.data).toLocaleString('pt-BR');
+
+    let html = `
+        <div class="detail-row"><span class="detail-label">Operador</span><span class="detail-value">${item.operador}</span></div>
+        <div class="detail-row"><span class="detail-label">Matrícula</span><span class="detail-value">${item.matricula}</span></div>
+        <div class="detail-row"><span class="detail-label">Nº da Máquina</span><span class="detail-value">${item.numero_maquina || '–'}</span></div>
+        <div class="detail-row"><span class="detail-label">Turno</span><span class="detail-value">${item.turno}</span></div>
+        <div class="detail-row"><span class="detail-label">Horímetro</span><span class="detail-value">${item.horimetro}</span></div>
+        <div class="detail-row"><span class="detail-label">Data</span><span class="detail-value">${item.data}</span></div>
+        <div class="detail-row"><span class="detail-label">Hora</span><span class="detail-value">${item.hora}</span></div>
+        <div class="detail-row"><span class="detail-label">Enviado em</span><span class="detail-value">${dt}</span></div>
+    `;
+
+    if (item.respostas) {
+        html += `<hr style="margin:20px 0;border:none;border-top:2px solid #f3f4f6;">`;
+        html += `<h3 style="font-family:'Syne',sans-serif;font-size:16px;margin-bottom:14px;color:#1e1b4b;">Respostas das inspeções</h3>`;
+        Object.entries(item.respostas).forEach(([key, val]) => {
+            const label = PERGUNTAS[key] || key;
+            const problema = isProblema(key, val);
+            const badgeClass = val === 'Sim' ? 'badge-sim' : 'badge-nao';
+            html += `
+                <div class="detail-row" style="${problema ? 'background:#fff5f5;border-radius:8px;padding:10px 12px;margin-bottom:4px;' : ''}">
+                    <span class="detail-label" style="font-size:13px;">${label}</span>
+                    <span class="${badgeClass}">${val}</span>
+                </div>
+            `;
+        });
+    }
+
+    document.getElementById('modalConteudo').innerHTML = html;
+    document.getElementById('modalDetalhes').classList.add('active');
+}
+
+function fecharModal() {
+    document.getElementById('modalDetalhes').classList.remove('active');
+}
+
+document.getElementById('modalDetalhes').addEventListener('click', e => {
+    if (e.target === document.getElementById('modalDetalhes')) fecharModal();
+});
+
+// ── ALERT ──
+function mostrarAlerta(msg, tipo) {
+    const box = document.getElementById('alertBox');
+    box.className = `alert ${tipo === 'success' ? 'alert-success' : 'alert-error'} visible`;
+    box.innerHTML = (tipo === 'success' ? '✅ ' : '⚠️ ') + msg;
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => { box.classList.remove('visible'); }, 6000);
+}
+
+// ── CLEAR ──
+function limparFormulario() {
+    if (!confirm('Limpar todos os campos?')) return;
+    document.getElementById('checklistForm').reset();
+    document.getElementById('operador').value = currentUser?.nome || '';
+    const now = new Date();
+    document.getElementById('data').value = now.toISOString().split('T')[0];
+    document.getElementById('hora').value = now.toTimeString().slice(0, 5);
+    document.querySelectorAll('.form-card.answered').forEach(c => c.classList.remove('answered'));
+    atualizarProgresso();
+}
+</script>
+    <script src="notifications.js"></script>
+    <script src="push.js"></script>
+</body>
+</html>
