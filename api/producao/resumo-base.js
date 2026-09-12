@@ -385,6 +385,9 @@ module.exports = async function handler(req, res) {
     const funcoes = Object.values(resumoPorFuncao)
       .sort((a, b) => a.funcao.localeCompare(b.funcao));
     
+    const colaboradores = Object.values(resumoPorColaboradores)
+      .sort((a, b) => a.colaboradores.localeCompare(b.colaboradores));
+    
     // Calcula percentuais no resumo geral
     if (resumoGeral.total > 0) {
       resumoGeral.percentualPresente = ((resumoGeral.presente / resumoGeral.total) * 100).toFixed(1);
