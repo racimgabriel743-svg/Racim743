@@ -385,11 +385,11 @@ module.exports = async function handler(req, res) {
     const funcoes = Object.values(resumoPorFuncao)
       .sort((a, b) => a.funcao.localeCompare(b.funcao));
     
-    const Nome = Object.values(resumoPorSupervisor)
-      .sort((a, b) => a.supervisor.localeCompare(b.Nome));
+    const nome = Object.values(resumoPorSupervisor)
+      .sort((a, b) => a.nome.localeCompare(b.nome));
 
-    const Nome = Object.values(resumoPorFuncao)
-      .sort((a, b) => a.funcao.localeCompare(b.Nome));
+    const nome = Object.values(resumoPorFuncao)
+      .sort((a, b) => a.nome.localeCompare(b.Nome));
     
     // Calcula percentuais no resumo geral
     if (resumoGeral.total > 0) {
