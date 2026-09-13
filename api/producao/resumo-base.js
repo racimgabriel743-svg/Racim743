@@ -377,23 +377,20 @@ module.exports = async function handler(req, res) {
     console.log(`[RESUMO-BASE] Registros processados: ${registrosFiltrados}`);
     console.log(`[RESUMO-BASE] Registros ignorados: ${registrosIgnorados}`);
     console.log(`[RESUMO-BASE] Total de linhas: ${rowsBase.length}`);
-    
+
+
     // Converte objetos em arrays e ordena
     const supervisores = Object.values(resumoPorSupervisor)
       .sort((a, b) => a.supervisor.localeCompare(b.supervisor));
-    
+
     const funcoes = Object.values(resumoPorFuncao)
       .sort((a, b) => a.funcao.localeCompare(b.funcao));
 
-     const Nome = Object.values(resumoPorSupervisor)
-      .sort((a, b) => a.Supervisor.localeCompare(b.colaboradores));
+    // Cria uma lista com todos os colaboradores e ordena alfabeticamente
+    const nomes = Object.values(resumoPorSupervisor)
+      .flatMap(item => item.colaboradores)
+      .sort((a, b) => a.localeCompare(b));
 
-     const Colaboradores = Object.values(resumoPorSupervisor)
-      .sort((a, b) => a.colaboradores.localeCompare(b.colaboradores));    
-
-     const Nome = Object.values(resumoPorSupervisor)
-      .sort((a, b) => a.colaboradores.localeCompare(b.colaboradores));     
-    
     // Calcula percentuais no resumo geral
     if (resumoGeral.total > 0) {
       resumoGeral.percentualPresente = ((resumoGeral.presente / resumoGeral.total) * 100).toFixed(1);
