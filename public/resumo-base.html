@@ -883,15 +883,27 @@
         }
 
         function ordenarColaboradoresPorNome(colaboradores) {
-            return [...(colaboradores || [])].sort((a, b) => {
-                return String(a.nome || '').trim().localeCompare(
-                    String(b.nome || '').trim(),
-                    'pt-BR',
-                    {
-                        sensitivity: 'base',
-                        ignorePunctuation: true
-                    }
-                );
+            if (!Array.isArray(colaboradores)) {
+                return [];
+            }
+
+            return [...colaboradores].sort((a, b) => {
+                const nomeA = String(a?.nome || '')
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .trim()
+                    .toUpperCase();
+
+                const nomeB = String(b?.nome || '')
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .trim()
+                    .toUpperCase();
+        
+                return nomeA.localeCompare(nomeB, 'pt-BR', {
+                    numeric: false,
+                    sensitivity: 'base'
+                });
             });
         }
         
@@ -958,6 +970,10 @@
 
             tbody.innerHTML = '';
 
+            supervisores.forEach(sup => {
+                sup.colaboradores = ordenarColaboradoresPorNome(sup.colaboradores);
+            });
+            
             supervisores.forEach((sup, idx) => {
                 const taxaPresenca = sup.total > 0 ? ((sup.presente / sup.total) * 100).toFixed(1) : 0;
                 
@@ -1017,6 +1033,10 @@
 
             tbody.innerHTML = '';
 
+            funcoes.forEach(func => {
+                func.colaboradores = ordenarColaboradoresPorNome(func.colaboradores);
+            });
+            
             funcoes.forEach((func, idx) => {
                 const taxaPresenca = func.total > 0 ? ((func.presente / func.total) * 100).toFixed(1) : 0;
                 
