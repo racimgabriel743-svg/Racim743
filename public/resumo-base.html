@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <!-- VERSAO 2026-09-12 - ORDENACAO COLABORADORES -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resumo Base - Análise de Presença</title>
@@ -886,23 +887,24 @@
             if (!Array.isArray(colaboradores)) {
                 return [];
             }
-
+        
             return [...colaboradores].sort((a, b) => {
                 const nomeA = String(a?.nome || '')
                     .normalize('NFD')
                     .replace(/[\u0300-\u036f]/g, '')
                     .trim()
                     .toUpperCase();
-
+    
                 const nomeB = String(b?.nome || '')
                     .normalize('NFD')
                     .replace(/[\u0300-\u036f]/g, '')
                     .trim()
                     .toUpperCase();
-        
+
                 return nomeA.localeCompare(nomeB, 'pt-BR', {
                     numeric: false,
-                    sensitivity: 'base'
+                    sensitivity: 'base',
+                    ignorePunctuation: true
                 });
             });
         }
