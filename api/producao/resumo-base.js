@@ -432,6 +432,14 @@ module.exports = async function handler(req, res) {
     console.log(`[RESUMO-BASE] ${resumoGeral.presente} presentes (${resumoGeral.percentualPresente}%)`);
     console.log(`[RESUMO-BASE] ${resumoGeral.desvio} desvios (${resumoGeral.percentualDesvio}%)`);
     console.log('[RESUMO-BASE] ========== FIM RESUMO ==========');
+    console.log('[ORDENAÇÃO] Supervisores:', supervisores.map(s => s.supervisor));
+    console.log('[ORDENAÇÃO] Funções:', funcoes.map(f => f.funcao));
+    console.log(
+      '[ORDENAÇÃO] Primeiros colaboradores:',
+      supervisores.length > 0
+        ? supervisores[0].colaboradores.map(c => c.nome)
+        : []
+    );
     
     return res.status(200).json({
       ok: true,
