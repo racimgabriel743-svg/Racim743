@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <!-- VERSAO 2026-09-12 - ORDENACAO COLABORADORES -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resumo Base - Análise de Presença</title>
@@ -612,66 +611,12 @@
             }, 5000);
         }
 
-        /*
-         * ============================================================
-         * ORDENAÇÃO CENTRAL DOS COLABORADORES
-         * ============================================================
-         *
-         * Esta função NÃO altera a ordem da planilha.
-         * Ela cria uma NOVA cópia do array e ordena pelo nome.
-         *
-         * Assim, pouco importa a ordem em que a API/Google Sheets
-         * entregar os colaboradores.
-         */
-        function ordenarColaboradoresPorNome(colaboradores) {
-            if (!Array.isArray(colaboradores)) {
-                return [];
-            }
-
-            return [...colaboradores].sort((a, b) => {
-                const nomeA = String(a?.nome ?? '')
-                    .normalize('NFD')
-                    .replace(/[\u0300-\u036f]/g, '')
-                    .trim()
-                    .toLowerCase();
-
-                const nomeB = String(b?.nome ?? '')
-                    .normalize('NFD')
-                    .replace(/[\u0300-\u036f]/g, '')
-                    .trim()
-                    .toLowerCase();
-
-                return nomeA.localeCompare(nomeB, 'pt-BR', {
-                    numeric: false,
-                    sensitivity: 'base',
-                    ignorePunctuation: true
-                });
-            });
-        }
-
-        function ordenarTexto(a, b) {
-            const textoA = String(a ?? '')
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .trim();
-
-            const textoB = String(b ?? '')
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .trim();
-
-            return textoA.localeCompare(textoB, 'pt-BR', {
-                numeric: false,
-                sensitivity: 'base',
-                ignorePunctuation: true
-            });
-        }
-
         async function carregarResumo() {
             try {
                 document.getElementById('loadingDiv').style.display = 'block';
                 document.getElementById('contentDiv').style.display = 'none';
 
+                // ===== CORREÇÃO: Envia data no formato YYYY-MM-DD =====
                 const dataInput = document.getElementById('filtroData').value;
                 
                 let url = '/api/producao/resumo-base';
@@ -694,6 +639,7 @@
                     throw new Error(result.msg || 'Erro ao carregar resumo');
                 }
 
+                // Mostra informações de debug
                 if (result.debug) {
                     console.log('[RESUMO] Debug da API:', result.debug);
                     console.log(`[RESUMO] Total de linhas: ${result.debug.totalLinhas}`);
@@ -702,47 +648,8 @@
                 }
 
                 dadosOriginais = JSON.parse(JSON.stringify(result));
-                dadosResumo = JSON.parse(JSON.stringify(result));
-
-                /*
-                 * ========================================================
-                 * ORDENAÇÃO IMEDIATAMENTE APÓS RECEBER OS DADOS DA API
-                 * ========================================================
-                 *
-                 * Aqui garantimos que a ordem original do Google Sheets
-                 * deixa de influenciar a apresentação.
-                 */
-                if (Array.isArray(dadosOriginais.porSupervisor)) {
-                    dadosOriginais.porSupervisor.forEach(supervisor => {
-                        supervisor.colaboradores = ordenarColaboradoresPorNome(
-                            supervisor.colaboradores
-                        );
-                    });
-
-                    dadosOriginais.porSupervisor.sort((a, b) =>
-                        ordenarTexto(a.supervisor, b.supervisor)
-                    );
-                }
-
-                if (Array.isArray(dadosOriginais.porFuncao)) {
-                    dadosOriginais.porFuncao.forEach(funcao => {
-                        funcao.colaboradores = ordenarColaboradoresPorNome(
-                            funcao.colaboradores
-                        );
-                    });
-
-                    dadosOriginais.porFuncao.sort((a, b) =>
-                        ordenarTexto(a.funcao, b.funcao)
-                    );
-                }
-
-                /*
-                 * Copia novamente os dados já ordenados.
-                 * Dessa forma, filtros posteriores também partem da
-                 * estrutura correta.
-                 */
-                dadosResumo = JSON.parse(JSON.stringify(dadosOriginais));
-
+                dadosResumo = result;
+                
                 preencherFiltros();
                 renderResumo();
 
@@ -769,26 +676,15 @@
         function preencherFiltros() {
             if (!dadosOriginais) return;
 
-            const supervisores = [...new Set(
-                dadosOriginais.porSupervisor.map(s => s.supervisor)
-            )].sort(ordenarTexto);
-
+            const supervisores = [...new Set(dadosOriginais.porSupervisor.map(s => s.supervisor))].sort();
             const selectSup = document.getElementById('filtroSupervisor');
-            selectSup.innerHTML = supervisores
-                .map(s => `<option value="${s}">${s}</option>`)
-                .join('');
+            selectSup.innerHTML = supervisores.map(s => `<option value="${s}">${s}</option>`).join('');
 
-            const funcoes = [...new Set(
-                dadosOriginais.porFuncao.map(f => f.funcao)
-            )].sort(ordenarTexto);
-
+            const funcoes = [...new Set(dadosOriginais.porFuncao.map(f => f.funcao))].sort();
             const selectFunc = document.getElementById('filtroFuncao');
-            selectFunc.innerHTML = funcoes
-                .map(f => `<option value="${f}">${f}</option>`)
-                .join('');
+            selectFunc.innerHTML = funcoes.map(f => `<option value="${f}">${f}</option>`).join('');
 
             const turnos = new Set();
-
             dadosOriginais.porSupervisor.forEach(sup => {
                 sup.colaboradores.forEach(colab => {
                     if (colab.turno && colab.turno !== 'Não informado') {
@@ -796,198 +692,92 @@
                     }
                 });
             });
-
-            const turnosArray = [...turnos].sort(ordenarTexto);
-
+            const turnosArray = [...turnos].sort();
             const selectTurno = document.getElementById('filtroTurno');
-            selectTurno.innerHTML = turnosArray
-                .map(t => `<option value="${t}">${t}</option>`)
-                .join('');
+            selectTurno.innerHTML = turnosArray.map(t => `<option value="${t}">${t}</option>`).join('');
         }
 
         function aplicarFiltros() {
             if (!dadosOriginais) return;
 
-            const supervisoresSelecionados = Array.from(
-                document.getElementById('filtroSupervisor').selectedOptions
-            ).map(o => o.value);
+            const supervisoresSelecionados = Array.from(document.getElementById('filtroSupervisor').selectedOptions).map(o => o.value);
+            const funcoesSelecionadas = Array.from(document.getElementById('filtroFuncao').selectedOptions).map(o => o.value);
+            const turnosSelecionados = Array.from(document.getElementById('filtroTurno').selectedOptions).map(o => o.value);
 
-            const funcoesSelecionadas = Array.from(
-                document.getElementById('filtroFuncao').selectedOptions
-            ).map(o => o.value);
+            console.log('[RESUMO] Filtros aplicados:', { supervisoresSelecionados, funcoesSelecionadas, turnosSelecionados });
 
-            const turnosSelecionados = Array.from(
-                document.getElementById('filtroTurno').selectedOptions
-            ).map(o => o.value);
-
-            console.log('[RESUMO] Filtros aplicados:', {
-                supervisoresSelecionados,
-                funcoesSelecionadas,
-                turnosSelecionados
-            });
-
-            atualizarTagsFiltros(
-                supervisoresSelecionados,
-                funcoesSelecionadas,
-                turnosSelecionados
-            );
+            atualizarTagsFiltros(supervisoresSelecionados, funcoesSelecionadas, turnosSelecionados);
 
             dadosResumo = JSON.parse(JSON.stringify(dadosOriginais));
 
             if (turnosSelecionados.length > 0) {
                 dadosResumo.porSupervisor = dadosResumo.porSupervisor.map(sup => ({
                     ...sup,
-                    colaboradores: sup.colaboradores.filter(c =>
-                        turnosSelecionados.includes(c.turno)
-                    )
+                    colaboradores: sup.colaboradores.filter(c => turnosSelecionados.includes(c.turno))
                 }));
 
                 dadosResumo.porFuncao = dadosResumo.porFuncao.map(func => ({
                     ...func,
-                    colaboradores: func.colaboradores.filter(c =>
-                        turnosSelecionados.includes(c.turno)
-                    )
+                    colaboradores: func.colaboradores.filter(c => turnosSelecionados.includes(c.turno))
                 }));
             }
 
             if (funcoesSelecionadas.length > 0) {
                 dadosResumo.porSupervisor = dadosResumo.porSupervisor.map(sup => ({
                     ...sup,
-                    colaboradores: sup.colaboradores.filter(c =>
-                        funcoesSelecionadas.includes(c.funcao)
-                    )
+                    colaboradores: sup.colaboradores.filter(c => funcoesSelecionadas.includes(c.funcao))
                 }));
 
-                dadosResumo.porFuncao = dadosResumo.porFuncao.filter(func =>
+                dadosResumo.porFuncao = dadosResumo.porFuncao.filter(func => 
                     funcoesSelecionadas.includes(func.funcao)
                 );
             }
 
             if (supervisoresSelecionados.length > 0) {
-                dadosResumo.porSupervisor = dadosResumo.porSupervisor.filter(sup =>
+                dadosResumo.porSupervisor = dadosResumo.porSupervisor.filter(sup => 
                     supervisoresSelecionados.includes(sup.supervisor)
                 );
 
                 dadosResumo.porFuncao = dadosResumo.porFuncao.map(func => ({
                     ...func,
-                    colaboradores: func.colaboradores.filter(c =>
-                        supervisoresSelecionados.includes(c.supervisor)
-                    )
+                    colaboradores: func.colaboradores.filter(c => supervisoresSelecionados.includes(c.supervisor))
                 }));
             }
 
-            /*
-             * ========================================================
-             * ORDENAÇÃO NOVAMENTE APÓS OS FILTROS
-             * ========================================================
-             *
-             * Os filtros podem gerar novos arrays.
-             * Por isso ordenamos novamente aqui.
-             */
-            dadosResumo.porSupervisor.forEach(sup => {
-                sup.colaboradores = ordenarColaboradoresPorNome(
-                    sup.colaboradores
-                );
-            });
-
-            dadosResumo.porFuncao.forEach(func => {
-                func.colaboradores = ordenarColaboradoresPorNome(
-                    func.colaboradores
-                );
-            });
-
-            dadosResumo.porSupervisor.sort((a, b) =>
-                ordenarTexto(a.supervisor, b.supervisor)
-            );
-
-            dadosResumo.porFuncao.sort((a, b) =>
-                ordenarTexto(a.funcao, b.funcao)
-            );
-
             dadosResumo.porSupervisor = dadosResumo.porSupervisor.map(sup => {
                 const colabs = sup.colaboradores;
-
                 return {
                     ...sup,
                     total: colabs.length,
-                    presente: colabs.filter(c =>
-                        c.status.toLowerCase() === 'presente'
-                    ).length,
-                    ausente: colabs.filter(c =>
-                        c.status.toLowerCase() === 'ausente'
-                    ).length,
-                    atestado: colabs.filter(c =>
-                        c.status.toLowerCase() === 'atestado'
-                    ).length,
-                    ferias: colabs.filter(c =>
-                        c.status.toLowerCase().includes('férias') ||
-                        c.status.toLowerCase().includes('ferias')
-                    ).length,
-                    folga: colabs.filter(c =>
-                        c.status.toLowerCase() === 'folga'
-                    ).length,
-                    afastado: colabs.filter(c =>
-                        c.status.toLowerCase() === 'afastado'
-                    ).length,
-                    desvio: colabs.filter(c =>
-                        c.desvio &&
-                        c.desvio.toLowerCase() === 'desvio'
-                    ).length,
+                    presente: colabs.filter(c => c.status.toLowerCase() === 'presente').length,
+                    ausente: colabs.filter(c => c.status.toLowerCase() === 'ausente').length,
+                    atestado: colabs.filter(c => c.status.toLowerCase() === 'atestado').length,
+                    ferias: colabs.filter(c => c.status.toLowerCase().includes('férias') || c.status.toLowerCase().includes('ferias')).length,
+                    folga: colabs.filter(c => c.status.toLowerCase() === 'folga').length,
+                    afastado: colabs.filter(c => c.status.toLowerCase() === 'afastado').length,
+                    desvio: colabs.filter(c => c.desvio && c.desvio.toLowerCase() === 'desvio').length,
                     outros: colabs.filter(c => {
                         const st = c.status.toLowerCase();
-
-                        return st !== 'presente' &&
-                               st !== 'ausente' &&
-                               st !== 'atestado' &&
-                               !st.includes('férias') &&
-                               !st.includes('ferias') &&
-                               st !== 'folga' &&
-                               st !== 'afastado' &&
-                               st !== 'desvio';
+                        return st !== 'presente' && st !== 'ausente' && st !== 'atestado' && !st.includes('férias') && !st.includes('ferias') && st !== 'folga' && st !== 'afastado' && st !== 'desvio';
                     }).length
                 };
             }).filter(sup => sup.total > 0);
 
             dadosResumo.porFuncao = dadosResumo.porFuncao.map(func => {
                 const colabs = func.colaboradores;
-
                 return {
                     ...func,
                     total: colabs.length,
-                    presente: colabs.filter(c =>
-                        c.status.toLowerCase() === 'presente'
-                    ).length,
-                    ausente: colabs.filter(c =>
-                        c.status.toLowerCase() === 'ausente'
-                    ).length,
-                    atestado: colabs.filter(c =>
-                        c.status.toLowerCase() === 'atestado'
-                    ).length,
-                    ferias: colabs.filter(c =>
-                        c.status.toLowerCase().includes('férias') ||
-                        c.status.toLowerCase().includes('ferias')
-                    ).length,
-                    folga: colabs.filter(c =>
-                        c.status.toLowerCase() === 'folga'
-                    ).length,
-                    afastado: colabs.filter(c =>
-                        c.status.toLowerCase() === 'afastado'
-                    ).length,
-                    desvio: colabs.filter(c =>
-                        c.desvio &&
-                        c.desvio.toLowerCase() === 'desvio'
-                    ).length,
+                    presente: colabs.filter(c => c.status.toLowerCase() === 'presente').length,
+                    ausente: colabs.filter(c => c.status.toLowerCase() === 'ausente').length,
+                    atestado: colabs.filter(c => c.status.toLowerCase() === 'atestado').length,
+                    ferias: colabs.filter(c => c.status.toLowerCase().includes('férias') || c.status.toLowerCase().includes('ferias')).length,
+                    folga: colabs.filter(c => c.status.toLowerCase() === 'folga').length,
+                    afastado: colabs.filter(c => c.status.toLowerCase() === 'afastado').length,
+                    desvio: colabs.filter(c => c.desvio && c.desvio.toLowerCase() === 'desvio').length,
                     outros: colabs.filter(c => {
                         const st = c.status.toLowerCase();
-
-                        return st !== 'presente' &&
-                               st !== 'ausente' &&
-                               st !== 'atestado' &&
-                               !st.includes('férias') &&
-                               !st.includes('ferias') &&
-                               st !== 'folga' &&
-                               st !== 'afastado' &&
-                               st !== 'desvio';
+                        return st !== 'presente' && st !== 'ausente' && st !== 'atestado' && !st.includes('férias') && !st.includes('ferias') && st !== 'folga' && st !== 'afastado' && st !== 'desvio';
                     }).length
                 };
             }).filter(func => func.total > 0);
@@ -1024,20 +814,12 @@
                 afastado: afastadoGeral,
                 desvio: desvioGeral,
                 outros: outrosGeral,
-                percentualPresente: totalGeral > 0
-                    ? ((presenteGeral / totalGeral) * 100).toFixed(1)
-                    : 0,
-                percentualAusente: totalGeral > 0
-                    ? (((totalGeral - presenteGeral) / totalGeral) * 100).toFixed(1)
-                    : 0
+                percentualPresente: totalGeral > 0 ? ((presenteGeral / totalGeral) * 100).toFixed(1) : 0,
+                percentualAusente: totalGeral > 0 ? (((totalGeral - presenteGeral) / totalGeral) * 100).toFixed(1) : 0
             };
 
             renderResumo();
-
-            showStatus(
-                `Filtros aplicados: ${totalGeral} colaboradores encontrados`,
-                'success'
-            );
+            showStatus(`Filtros aplicados: ${totalGeral} colaboradores encontrados`, 'success');
         }
 
         function atualizarTagsFiltros(supervisores, funcoes, turnos) {
@@ -1070,13 +852,12 @@
 
         function removerFiltro(tipo, valor) {
             const selects = {
-                supervisor: document.getElementById('filtroSupervisor'),
-                funcao: document.getElementById('filtroFuncao'),
-                turno: document.getElementById('filtroTurno')
+                'supervisor': document.getElementById('filtroSupervisor'),
+                'funcao': document.getElementById('filtroFuncao'),
+                'turno': document.getElementById('filtroTurno')
             };
 
             const select = selects[tipo];
-
             if (select) {
                 Array.from(select.options).forEach(option => {
                     if (option.value === valor) {
@@ -1093,31 +874,11 @@
             document.getElementById('filtroFuncao').selectedIndex = -1;
             document.getElementById('filtroTurno').selectedIndex = -1;
             document.getElementById('filtrosAtivos').innerHTML = '';
-
+            
             if (dadosOriginais) {
                 dadosResumo = JSON.parse(JSON.stringify(dadosOriginais));
-
-                /*
-                 * Garante novamente a ordenação após limpar os filtros.
-                 */
-                dadosResumo.porSupervisor.forEach(sup => {
-                    sup.colaboradores = ordenarColaboradoresPorNome(
-                        sup.colaboradores
-                    );
-                });
-
-                dadosResumo.porFuncao.forEach(func => {
-                    func.colaboradores = ordenarColaboradoresPorNome(
-                        func.colaboradores
-                    );
-                });
-
                 renderResumo();
-
-                showStatus(
-                    'Todos os filtros foram removidos!',
-                    'info'
-                );
+                showStatus('Todos os filtros foram removidos!', 'info');
             }
         }
 
@@ -1125,44 +886,36 @@
             if (!dadosResumo) return;
 
             const geral = dadosResumo.resumoGeral;
-
             document.getElementById('resumoGeralCards').innerHTML = `
                 <div class="card-resumo">
                     <h3>Total Colaboradores</h3>
                     <div class="valor">${geral.total}</div>
                 </div>
-
                 <div class="card-resumo success">
                     <h3>Presentes</h3>
                     <div class="valor">${geral.presente}</div>
                     <div class="percentual">${geral.percentualPresente || 0}%</div>
                 </div>
-
                 <div class="card-resumo danger">
                     <h3>Ausentes</h3>
                     <div class="valor">${geral.ausente}</div>
                 </div>
-
                 <div class="card-resumo warning">
                     <h3>Atestado</h3>
                     <div class="valor">${geral.atestado || 0}</div>
                 </div>
-
                 <div class="card-resumo warning">
                     <h3>Férias</h3>
                     <div class="valor">${geral.ferias}</div>
                 </div>
-
                 <div class="card-resumo">
                     <h3>Folga</h3>
                     <div class="valor">${geral.folga}</div>
                 </div>
-
                 <div class="card-resumo">
                     <h3>Afastados</h3>
                     <div class="valor">${geral.afastado}</div>
                 </div>
-
                 <div class="card-resumo danger">
                     <h3>Desvios</h3>
                     <div class="valor">${geral.desvio || 0}</div>
@@ -1176,79 +929,27 @@
 
         function renderTabelaSupervisores() {
             const tbody = document.querySelector('#tabelaSupervisores tbody');
+            const supervisores = dadosResumo.porSupervisor || [];
 
-            /*
-             * Sempre cria uma cópia antes de ordenar.
-             */
-            const supervisores = [...(dadosResumo.porSupervisor || [])]
-                .sort((a, b) => ordenarTexto(a.supervisor, b.supervisor));
-
-            document.getElementById('totalSupervisores').textContent =
-                `${supervisores.length} supervisores`;
+            document.getElementById('totalSupervisores').textContent = `${supervisores.length} supervisores`;
 
             tbody.innerHTML = '';
 
             supervisores.forEach((sup, idx) => {
-
-                /*
-                 * ORDENAÇÃO DEFINITIVA NO MOMENTO DA EXIBIÇÃO
-                 *
-                 * Mesmo que o Google Sheets/API tenha enviado:
-                 *
-                 * Zé
-                 * Ana
-                 * Carlos
-                 * Bruno
-                 *
-                 * a tela exibirá:
-                 *
-                 * Ana
-                 * Bruno
-                 * Carlos
-                 * Zé
-                 */
-                const colaboradoresOrdenados =
-                    ordenarColaboradoresPorNome(sup.colaboradores);
-
-                const taxaPresenca = sup.total > 0
-                    ? ((sup.presente / sup.total) * 100).toFixed(1)
-                    : 0;
-
+                const taxaPresenca = sup.total > 0 ? ((sup.presente / sup.total) * 100).toFixed(1) : 0;
+                
                 const tr = document.createElement('tr');
-
                 tr.innerHTML = `
                     <td><strong>${sup.supervisor}</strong></td>
-
                     <td>${sup.total}</td>
-
-                    <td style="color: #28a745; font-weight: 600;">
-                        ${sup.presente}
-                    </td>
-
-                    <td style="color: #dc3545;">
-                        ${sup.ausente}
-                    </td>
-
-                    <td style="color: #ffc107;">
-                        ${sup.atestado || 0}
-                    </td>
-
-                    <td style="color: #ffc107;">
-                        ${sup.ferias}
-                    </td>
-
-                    <td style="color: #17a2b8;">
-                        ${sup.folga}
-                    </td>
-
+                    <td style="color: #28a745; font-weight: 600;">${sup.presente}</td>
+                    <td style="color: #dc3545;">${sup.ausente}</td>
+                    <td style="color: #ffc107;">${sup.atestado || 0}</td>
+                    <td style="color: #ffc107;">${sup.ferias}</td>
+                    <td style="color: #17a2b8;">${sup.folga}</td>
                     <td>${sup.afastado}</td>
-
-                    <td style="color: #dc3545; font-weight: 600;">
-                        ${sup.desvio || 0}
-                    </td>
-
+                    <td style="color: #dc3545; font-weight: 600;">${sup.desvio || 0}</td>
                     <td>${sup.outros}</td>
-
                     <td>
                         <div class="barra-progresso">
                             <div class="barra-fill" style="width: ${taxaPresenca}%">
@@ -1256,102 +957,49 @@
                             </div>
                         </div>
                     </td>
-
                     <td>
-                        <span class="colab-toggle"
-                              onclick="toggleColaboradores('sup-${idx}')">
-                            <i class="fas fa-users"></i>
-                            Ver ${colaboradoresOrdenados.length}
+                        <span class="colab-toggle" onclick="toggleColaboradores('sup-${idx}')">
+                            <i class="fas fa-users"></i> Ver ${sup.colaboradores.length}
                         </span>
-
                         <div id="sup-${idx}" class="colaboradores-lista">
-                            ${colaboradoresOrdenados.map(c => `
+                            ${sup.colaboradores.map(c => `
                                 <div class="colaborador-item">
-                                    <strong>${c.nome}</strong>
-                                    (${c.matricula}) -
-                                    <strong>${c.funcao}</strong> -
-                                    Turno: ${c.turno} -
-
-                                    <span style="color: ${
-                                        c.status === 'Presente'
-                                            ? '#28a745'
-                                            : c.desvio === 'Desvio'
-                                                ? '#dc3545'
-                                                : '#6c757d'
-                                    };">
-                                        ${c.status}
-                                        ${c.desvio === 'Desvio'
-                                            ? ' (DESVIO)'
-                                            : ''}
+                                    <strong>${c.nome}</strong> (${c.matricula}) - <strong>${c.funcao}</strong> - Turno: ${c.turno} - 
+                                    <span style="color: ${c.status === 'Presente' ? '#28a745' : c.desvio === 'Desvio' ? '#dc3545' : '#6c757d'};">
+                                        ${c.status}${c.desvio === 'Desvio' ? ' (DESVIO)' : ''}
                                     </span>
                                 </div>
                             `).join('')}
                         </div>
                     </td>
                 `;
-
                 tbody.appendChild(tr);
             });
         }
 
         function renderTabelaFuncoes() {
             const tbody = document.querySelector('#tabelaFuncoes tbody');
+            const funcoes = dadosResumo.porFuncao || [];
 
-            const funcoes = [...(dadosResumo.porFuncao || [])]
-                .sort((a, b) => ordenarTexto(a.funcao, b.funcao));
-
-            document.getElementById('totalFuncoes').textContent =
-                `${funcoes.length} funções`;
+            document.getElementById('totalFuncoes').textContent = `${funcoes.length} funções`;
 
             tbody.innerHTML = '';
 
             funcoes.forEach((func, idx) => {
-
-                /*
-                 * ORDENAÇÃO DEFINITIVA NO MOMENTO DA EXIBIÇÃO.
-                 */
-                const colaboradoresOrdenados =
-                    ordenarColaboradoresPorNome(func.colaboradores);
-
-                const taxaPresenca = func.total > 0
-                    ? ((func.presente / func.total) * 100).toFixed(1)
-                    : 0;
-
+                const taxaPresenca = func.total > 0 ? ((func.presente / func.total) * 100).toFixed(1) : 0;
+                
                 const tr = document.createElement('tr');
-
                 tr.innerHTML = `
                     <td><strong>${func.funcao}</strong></td>
-
                     <td>${func.total}</td>
-
-                    <td style="color: #28a745; font-weight: 600;">
-                        ${func.presente}
-                    </td>
-
-                    <td style="color: #dc3545;">
-                        ${func.ausente}
-                    </td>
-
-                    <td style="color: #ffc107;">
-                        ${func.atestado || 0}
-                    </td>
-
-                    <td style="color: #ffc107;">
-                        ${func.ferias}
-                    </td>
-
-                    <td style="color: #17a2b8;">
-                        ${func.folga}
-                    </td>
-
+                    <td style="color: #28a745; font-weight: 600;">${func.presente}</td>
+                    <td style="color: #dc3545;">${func.ausente}</td>
+                    <td style="color: #ffc107;">${func.atestado || 0}</td>
+                    <td style="color: #ffc107;">${func.ferias}</td>
+                    <td style="color: #17a2b8;">${func.folga}</td>
                     <td>${func.afastado}</td>
-
-                    <td style="color: #dc3545; font-weight: 600;">
-                        ${func.desvio || 0}
-                    </td>
-
+                    <td style="color: #dc3545; font-weight: 600;">${func.desvio || 0}</td>
                     <td>${func.outros}</td>
-
                     <td>
                         <div class="barra-progresso">
                             <div class="barra-fill" style="width: ${taxaPresenca}%">
@@ -1359,40 +1007,22 @@
                             </div>
                         </div>
                     </td>
-
                     <td>
-                        <span class="colab-toggle"
-                              onclick="toggleColaboradores('func-${idx}')">
-                            <i class="fas fa-users"></i>
-                            Ver ${colaboradoresOrdenados.length}
+                        <span class="colab-toggle" onclick="toggleColaboradores('func-${idx}')">
+                            <i class="fas fa-users"></i> Ver ${func.colaboradores.length}
                         </span>
-
                         <div id="func-${idx}" class="colaboradores-lista">
-                            ${colaboradoresOrdenados.map(c => `
+                            ${func.colaboradores.map(c => `
                                 <div class="colaborador-item">
-                                    <strong>${c.nome}</strong>
-                                    (${c.matricula}) -
-                                    ${c.supervisor} -
-                                    Turno: ${c.turno} -
-
-                                    <span style="color: ${
-                                        c.status === 'Presente'
-                                            ? '#28a745'
-                                            : c.desvio === 'Desvio'
-                                                ? '#dc3545'
-                                                : '#6c757d'
-                                    };">
-                                        ${c.status}
-                                        ${c.desvio === 'Desvio'
-                                            ? ' (DESVIO)'
-                                            : ''}
+                                    <strong>${c.nome}</strong> (${c.matricula}) - ${c.supervisor} - Turno: ${c.turno} - 
+                                    <span style="color: ${c.status === 'Presente' ? '#28a745' : c.desvio === 'Desvio' ? '#dc3545' : '#6c757d'};">
+                                        ${c.status}${c.desvio === 'Desvio' ? ' (DESVIO)' : ''}
                                     </span>
                                 </div>
                             `).join('')}
                         </div>
                     </td>
                 `;
-
                 tbody.appendChild(tr);
             });
         }
@@ -1400,15 +1030,12 @@
         function renderTabelaDesvios() {
             const tbody = document.querySelector('#tabelaDesvios tbody');
             tbody.innerHTML = '';
-
+            
             const desvios = [];
-
+            
             dadosResumo.porSupervisor.forEach(sup => {
                 sup.colaboradores.forEach(colab => {
-                    if (
-                        colab.desvio &&
-                        colab.desvio.toLowerCase() === 'desvio'
-                    ) {
+                    if (colab.desvio && colab.desvio.toLowerCase() === 'desvio') {
                         desvios.push({
                             ...colab,
                             supervisor: sup.supervisor
@@ -1417,63 +1044,38 @@
                 });
             });
 
-            /*
-             * Ordena também o detalhamento de desvios pelo nome.
-             */
-            desvios.sort((a, b) =>
-                ordenarTexto(a.nome, b.nome)
-            );
-
-            document.getElementById('totalDesvios').textContent =
-                `${desvios.length} desvios`;
+            document.getElementById('totalDesvios').textContent = `${desvios.length} desvios`;
 
             if (desvios.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7"
-                            style="text-align: center; padding: 30px; color: #28a745;">
-
-                            <i class="fas fa-check-circle"
-                               style="font-size: 32px; margin-bottom: 10px;">
-                            </i>
-
-                            <p style="font-size: 16px; font-weight: 600;">
-                                Nenhum desvio encontrado para esta data!
-                            </p>
+                        <td colspan="7" style="text-align: center; padding: 30px; color: #28a745;">
+                            <i class="fas fa-check-circle" style="font-size: 32px; margin-bottom: 10px;"></i>
+                            <p style="font-size: 16px; font-weight: 600;">Nenhum desvio encontrado para esta data!</p>
                         </td>
                     </tr>
                 `;
-
                 return;
             }
 
             desvios.forEach(desvio => {
                 const tr = document.createElement('tr');
-
                 tr.innerHTML = `
                     <td><strong>${desvio.nome}</strong></td>
                     <td>${desvio.matricula}</td>
                     <td>${desvio.funcao}</td>
                     <td>${desvio.supervisor}</td>
                     <td>${desvio.turno}</td>
-                    <td>
-                        <span style="color: #dc3545; font-weight: 600;">
-                            ${desvio.status}
-                        </span>
-                    </td>
+                    <td><span style="color: #dc3545; font-weight: 600;">${desvio.status}</span></td>
                     <td>${desvio.observacao || '-'}</td>
                 `;
-
                 tbody.appendChild(tr);
             });
         }
 
         function toggleColaboradores(id) {
             const div = document.getElementById(id);
-
-            if (div) {
-                div.classList.toggle('show');
-            }
+            div.classList.toggle('show');
         }
 
         function exportarResumo() {
@@ -1482,77 +1084,46 @@
                 return;
             }
 
-            let csv =
-                'Tipo,Nome,Total,Presente,Ausente,Atestado,Férias,Folga,Afastado,Desvio,Outros,Taxa Presença\n';
-
+            let csv = 'Tipo,Nome,Total,Presente,Ausente,Atestado,Férias,Folga,Afastado,Desvio,Outros,Taxa Presença\n';
+            
             dadosResumo.porSupervisor.forEach(sup => {
-                const taxa = sup.total > 0
-                    ? ((sup.presente / sup.total) * 100).toFixed(1)
-                    : 0;
-
+                const taxa = sup.total > 0 ? ((sup.presente / sup.total) * 100).toFixed(1) : 0;
                 csv += `Supervisor,"${sup.supervisor}",${sup.total},${sup.presente},${sup.ausente},${sup.atestado || 0},${sup.ferias},${sup.folga},${sup.afastado},${sup.desvio || 0},${sup.outros},${taxa}%\n`;
             });
 
             csv += '\n';
 
             dadosResumo.porFuncao.forEach(func => {
-                const taxa = func.total > 0
-                    ? ((func.presente / func.total) * 100).toFixed(1)
-                    : 0;
-
+                const taxa = func.total > 0 ? ((func.presente / func.total) * 100).toFixed(1) : 0;
                 csv += `Função,"${func.funcao}",${func.total},${func.presente},${func.ausente},${func.atestado || 0},${func.ferias},${func.folga},${func.afastado},${func.desvio || 0},${func.outros},${taxa}%\n`;
             });
 
             csv += '\n\nDetalhamento de Desvios\n';
             csv += 'Colaborador,Matrícula,Função,Supervisor,Turno,Status,Observações\n';
 
-            /*
-             * Exportação também respeita a ordem alfabética.
-             */
             dadosResumo.porSupervisor.forEach(sup => {
-
-                const colaboradoresOrdenados =
-                    ordenarColaboradoresPorNome(sup.colaboradores);
-
-                colaboradoresOrdenados.forEach(colab => {
-                    if (
-                        colab.desvio &&
-                        colab.desvio.toLowerCase() === 'desvio'
-                    ) {
+                sup.colaboradores.forEach(colab => {
+                    if (colab.desvio && colab.desvio.toLowerCase() === 'desvio') {
                         csv += `"${colab.nome}",${colab.matricula},"${colab.funcao}","${sup.supervisor}","${colab.turno}","${colab.status}","${colab.observacao || '-'}"\n`;
                     }
                 });
             });
 
-            const blob = new Blob(
-                [csv],
-                { type: 'text/csv;charset=utf-8;' }
-            );
-
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
-
             link.href = URL.createObjectURL(blob);
-            link.download =
-                `Resumo_Base_${dadosResumo.dataReferencia || 'hoje'}.csv`;
-
+            link.download = `Resumo_Base_${dadosResumo.dataReferencia || 'hoje'}.csv`;
             link.click();
 
-            showStatus(
-                'Resumo exportado com sucesso!',
-                'success'
-            );
+            showStatus('Resumo exportado com sucesso!', 'success');
         }
 
+        // ===== CORREÇÃO: Event listener para mudança de data =====
         document.addEventListener('DOMContentLoaded', function() {
             const inputData = document.getElementById('filtroData');
-
             if (inputData) {
                 inputData.addEventListener('change', function() {
-                    console.log(
-                        '[RESUMO] Data alterada para:',
-                        this.value
-                    );
-
+                    console.log('[RESUMO] Data alterada para:', this.value);
                     carregarResumo();
                 });
             }
@@ -1560,46 +1131,27 @@
 
         window.onload = function() {
             const usuario = sessionStorage.getItem('usuario');
-
             if (!usuario) {
                 showStatus('Sessão expirada', 'error');
-
-                setTimeout(() => {
-                    window.location.href = '/';
-                }, 2000);
-
+                setTimeout(() => window.location.href = '/', 2000);
                 return;
             }
 
+            // ===== CORREÇÃO: Define data de hoje no input =====
             const hoje = new Date();
-
             const ano = hoje.getFullYear();
-            const mes = String(
-                hoje.getMonth() + 1
-            ).padStart(2, '0');
+            const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+            const dia = String(hoje.getDate()).padStart(2, '0');
+            const dataHoje = `${dia}-${mes}-${ano}`;
+            
+            document.getElementById('filtroData').value = dataHoje;
+            console.log('[RESUMO] Data inicial definida:', dataHoje);
 
-            const dia = String(
-                hoje.getDate()
-            ).padStart(2, '0');
-
-            const dataHoje =
-                `${ano}-${mes}-${dia}`;
-
-            document.getElementById(
-                'filtroData'
-            ).value = dataHoje;
-
-            console.log(
-                '[RESUMO] Data inicial definida:',
-                dataHoje
-            );
-
+            // Carrega resumo automaticamente
             carregarResumo();
         };
 
-        console.log(
-            '[RESUMO] Script carregado - ordenação alfabética ativa'
-        );
+        console.log('[RESUMO] Script carregado');
     </script>
 </body>
 </html>
