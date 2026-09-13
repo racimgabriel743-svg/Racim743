@@ -377,20 +377,31 @@ module.exports = async function handler(req, res) {
     console.log(`[RESUMO-BASE] Registros processados: ${registrosFiltrados}`);
     console.log(`[RESUMO-BASE] Registros ignorados: ${registrosIgnorados}`);
     console.log(`[RESUMO-BASE] Total de linhas: ${rowsBase.length}`);
-    
-    // Converte objetos em arrays e ordena
-    const supervisores = Object.values(resumoPorSupervisor)
-      .sort((a, b) => a.supervisor.localeCompare(b.supervisor));
-    
-    const funcoes = Object.values(resumoPorFuncao)
-      .sort((a, b) => a.funcao.localeCompare(b.funcao));
-    
-    const nome = Object.values(resumoPorSupervisor)
-      .sort((a, b) => a.nome.localeCompare(b.nome));
 
-    const nome = Object.values(resumoPorFuncao)
-      .sort((a, b) => a.nome.localeCompare(b.Nome));
+    // ===== ORDENA COLABORADORES POR NOME =====
+
+    // Ordena os colaboradores dentro de cada supervisor
+    Object.values(resumoPorSupervisor).forEach(supervisor => {
+      supervisor.colaboradores.sort((a, b) =>
+        a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' })
+      );
+    });
     
+    // Ordena os colaboradores dentro de cada função
+    Object.values(resumoPorFuncao).forEach(funcao => {
+      funcao.colaboradores.sort((a, b) =>
+        a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
+    });
+
+    // Converte objetos em arrays e ordena supervisores/funções
+    const supervisores = Object.values(resumoPorSupervisor)
+      .sort((a, b) =>
+        a.supervisor.localeCompare(b.supervisor, 'pt-BR', { sensitivity: 'base' }));
+
+    const funcoes = Object.values(resumoPorFuncao)
+      .sort((a, b) =>
+        a.funcao.localeCompare(b.funcao, 'pt-BR', { sensitivity: 'base' }));
+        
     // Calcula percentuais no resumo geral
     if (resumoGeral.total > 0) {
       resumoGeral.percentualPresente = ((resumoGeral.presente / resumoGeral.total) * 100).toFixed(1);
