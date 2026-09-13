@@ -378,30 +378,46 @@ module.exports = async function handler(req, res) {
     console.log(`[RESUMO-BASE] Registros ignorados: ${registrosIgnorados}`);
     console.log(`[RESUMO-BASE] Total de linhas: ${rowsBase.length}`);
 
-    // ===== ORDENA COLABORADORES POR NOME =====
+    // ===== ORDENAÇÃO ALFABÉTICA =====
 
-    // Ordena os colaboradores dentro de cada supervisor
+    // Função auxiliar para ordenar textos corretamente
+    function ordenarTexto(a, b) {
+      const textoA = String(a || '').trim();
+      const textoB = String(b || '').trim();
+
+      return textoA.localeCompare(textoB, 'pt-BR', {
+        sensitivity: 'base',
+        numeric: false,
+        ignorePunctuation: true
+      });
+    }
+
+    // Ordena colaboradores dentro de cada supervisor
     Object.values(resumoPorSupervisor).forEach(supervisor => {
-      supervisor.colaboradores.sort((a, b) =>
-        a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' })
-      );
+      supervisor.colaboradores.sort((a, b) => {
+        return ordenarTexto(a.nome, b.nome);
+      });
     });
-    
-    // Ordena os colaboradores dentro de cada função
+
+    // Ordena colaboradores dentro de cada função
     Object.values(resumoPorFuncao).forEach(funcao => {
-      funcao.colaboradores.sort((a, b) =>
-        a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
+      funcao.colaboradores.sort((a, b) => {
+        return ordenarTexto(a.nome, b.nome);
+      });
     });
-
-    // Converte objetos em arrays e ordena supervisores/funções
+  
+    // Ordena os supervisores alfabeticamente
     const supervisores = Object.values(resumoPorSupervisor)
-      .sort((a, b) =>
-        a.supervisor.localeCompare(b.supervisor, 'pt-BR', { sensitivity: 'base' }));
+      .sort((a, b) => {
+        return ordenarTexto(a.supervisor, b.supervisor);
+      });
 
+    // Ordena as funções alfabeticamente
     const funcoes = Object.values(resumoPorFuncao)
-      .sort((a, b) =>
-        a.funcao.localeCompare(b.funcao, 'pt-BR', { sensitivity: 'base' }));
-        
+      .sort((a, b) => {
+        return ordenarTexto(a.funcao, b.funcao);
+      });
+
     // Calcula percentuais no resumo geral
     if (resumoGeral.total > 0) {
       resumoGeral.percentualPresente = ((resumoGeral.presente / resumoGeral.total) * 100).toFixed(1);
