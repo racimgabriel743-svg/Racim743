@@ -377,83 +377,13 @@ module.exports = async function handler(req, res) {
     console.log(`[RESUMO-BASE] Registros processados: ${registrosFiltrados}`);
     console.log(`[RESUMO-BASE] Registros ignorados: ${registrosIgnorados}`);
     console.log(`[RESUMO-BASE] Total de linhas: ${rowsBase.length}`);
-
-    // ===== ORDENAÇÃO ALFABÉTICA DEFINITIVA =====
-
-    // Normaliza o texto antes da comparação.
-    // Isso evita que acentos, espaços extras,
-    // maiúsculas/minúsculas ou caracteres especiais
-    // interfiram na ordenação.
-    function chaveOrdenacao(valor) {
-      return String(valor || '')
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .trim()
-        .toUpperCase();
-    }
     
-    function compararAlfabetico(a, b) {
-      const nomeA = chaveOrdenacao(a);
-      const nomeB = chaveOrdenacao(b);
-    
-      return nomeA.localeCompare(nomeB, 'pt-BR', {
-        sensitivity: 'base',
-        numeric: false,
-        ignorePunctuation: true
-      });
-    }
-        
-    // =====================================================
-    // ORDENA COLABORADORES POR NOME
-    // =====================================================
-    
-    Object.values(resumoPorSupervisor).forEach(supervisor => {
-      supervisor.colaboradores.sort((a, b) => {
-        return compararAlfabetico(a.nome, b.nome);
-      });
-    });
-    
-    Object.values(resumoPorFuncao).forEach(funcao => {
-      funcao.colaboradores.sort((a, b) => {
-        return compararAlfabetico(a.nome, b.nome);
-      });
-    });
-
-    // =====================================================
-    // ORDENA SUPERVISORES
-    // =====================================================
-    
+    // Converte objetos em arrays e ordena
     const supervisores = Object.values(resumoPorSupervisor)
-      .sort((a, b) => {
-        return compararAlfabetico(a.supervisor, b.supervisor);
-      });
-    
-    // =====================================================
-    // ORDENA FUNÇÕES
-    // =====================================================
+      .sort((a, b) => a.supervisor.localeCompare(b.supervisor));
     
     const funcoes = Object.values(resumoPorFuncao)
-      .sort((a, b) => {
-        return compararAlfabetico(a.funcao, b.funcao);
-      });
-    
-    // =====================================================
-    // SEGURANÇA EXTRA:
-    // GARANTE A ORDEM DOS COLABORADORES
-    // DEPOIS DA ORDENAÇÃO DOS GRUPOS
-    // =====================================================
-    
-    supervisores.forEach(supervisor => {
-      supervisor.colaboradores.sort((a, b) => {
-        return compararAlfabetico(a.nome, b.nome);
-      });
-    });
-
-    funcoes.forEach(funcao => {
-      funcao.colaboradores.sort((a, b) => {
-        return compararAlfabetico(a.nome, b.nome);
-      });
-    });
+      .sort((a, b) => a.funcao.localeCompare(b.funcao));
     
     // Calcula percentuais no resumo geral
     if (resumoGeral.total > 0) {
@@ -469,14 +399,6 @@ module.exports = async function handler(req, res) {
     console.log(`[RESUMO-BASE] ${resumoGeral.presente} presentes (${resumoGeral.percentualPresente}%)`);
     console.log(`[RESUMO-BASE] ${resumoGeral.desvio} desvios (${resumoGeral.percentualDesvio}%)`);
     console.log('[RESUMO-BASE] ========== FIM RESUMO ==========');
-    console.log('[ORDENAÇÃO] Supervisores:', supervisores.map(s => s.supervisor));
-    console.log('[ORDENAÇÃO] Funções:', funcoes.map(f => f.funcao));
-    console.log(
-      '[ORDENAÇÃO] Primeiros colaboradores:',
-      supervisores.length > 0
-        ? supervisores[0].colaboradores.map(c => c.nome)
-        : []
-    );
     
     return res.status(200).json({
       ok: true,
