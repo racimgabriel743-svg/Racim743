@@ -882,6 +882,17 @@
             }
         }
 
+        function ordenarColaboradoresPorNome(colaboradores) {
+            return [...(colaboradores || [])].sort((a, b) => {
+                const nomeA = String(a.nome || '').trim();
+                const nomeB = String(b.nome || '').trim();
+
+                return nomeA.localeCompare(nomeB, 'pt-BR', {
+                    sensitivity: 'base'
+                });
+            });
+        }
+        
         function renderResumo() {
             if (!dadosResumo) return;
 
@@ -962,7 +973,7 @@
                             <i class="fas fa-users"></i> Ver ${sup.colaboradores.length}
                         </span>
                         <div id="sup-${idx}" class="colaboradores-lista">
-                            ${sup.colaboradores.map(c => `
+                            ${ordenarColaboradoresPorNome(sup.colaboradores).map(c => `
                                 <div class="colaborador-item">
                                     <strong>${c.nome}</strong> (${c.matricula}) - <strong>${c.funcao}</strong> - Turno: ${c.turno} - 
                                     <span style="color: ${c.status === 'Presente' ? '#28a745' : c.desvio === 'Desvio' ? '#dc3545' : '#6c757d'};">
@@ -1012,7 +1023,7 @@
                             <i class="fas fa-users"></i> Ver ${func.colaboradores.length}
                         </span>
                         <div id="func-${idx}" class="colaboradores-lista">
-                            ${func.colaboradores.map(c => `
+                            ${ordenarColaboradoresPorNome(func.colaboradores).map(c => `
                                 <div class="colaborador-item">
                                     <strong>${c.nome}</strong> (${c.matricula}) - ${c.supervisor} - Turno: ${c.turno} - 
                                     <span style="color: ${c.status === 'Presente' ? '#28a745' : c.desvio === 'Desvio' ? '#dc3545' : '#6c757d'};">
@@ -1044,6 +1055,15 @@
                 });
             });
 
+            // ===== ORDENA DESVIOS POR NOME =====
+            desvios.sort((a, b) => {
+                return String(a.nome || '').trim().localeCompare(
+                    String(b.nome || '').trim(),
+                    'pt-BR',
+                    { sensitivity: 'base' }
+                );
+            });
+            
             document.getElementById('totalDesvios').textContent = `${desvios.length} desvios`;
 
             if (desvios.length === 0) {
@@ -1137,13 +1157,15 @@
                 return;
             }
 
-            // ===== CORREÇÃO: Define data de hoje no input =====
+            // ===== DEFINE DATA DE HOJE NO INPUT =====
             const hoje = new Date();
             const ano = hoje.getFullYear();
             const mes = String(hoje.getMonth() + 1).padStart(2, '0');
             const dia = String(hoje.getDate()).padStart(2, '0');
-            const dataHoje = `${dia}-${mes}-${ano}`;
-            
+
+            // input type="date" exige YYYY-MM-DD
+            const dataHoje = `${ano}-${mes}-${dia}`;
+
             document.getElementById('filtroData').value = dataHoje;
             console.log('[RESUMO] Data inicial definida:', dataHoje);
 
