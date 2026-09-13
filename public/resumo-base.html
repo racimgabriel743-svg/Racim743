@@ -884,12 +884,14 @@
 
         function ordenarColaboradoresPorNome(colaboradores) {
             return [...(colaboradores || [])].sort((a, b) => {
-                const nomeA = String(a.nome || '').trim();
-                const nomeB = String(b.nome || '').trim();
-
-                return nomeA.localeCompare(nomeB, 'pt-BR', {
-                    sensitivity: 'base'
-                });
+                return String(a.nome || '').trim().localeCompare(
+                    String(b.nome || '').trim(),
+                    'pt-BR',
+                    {
+                        sensitivity: 'base',
+                        ignorePunctuation: true
+                    }
+                );
             });
         }
         
@@ -939,13 +941,16 @@
         }
 
         function renderTabelaSupervisores() {
-            const tbody = document.querySelector('#tabelaSupervisores tbody');
-           
+             const tbody = document.querySelector('#tabelaSupervisores tbody');
+
             const supervisores = [...(dadosResumo.porSupervisor || [])].sort((a, b) => {
                 return String(a.supervisor || '').trim().localeCompare(
-                    String(b.supervisor || '').trim(),
+                    String(b.supervisor || '').trim(), 
                     'pt-BR',
-                    { sensitivity: 'base' }
+                    {
+                        sensitivity: 'base',
+                        ignorePunctuation: true
+                    }
                 );
             });
 
@@ -1002,10 +1007,12 @@
                 return String(a.funcao || '').trim().localeCompare(
                     String(b.funcao || '').trim(),
                     'pt-BR',
-                    { sensitivity: 'base' }
+                    {
+                        sensitivity: 'base',
+                        ignorePunctuation: true
+                    }
                 );
             });
-
             document.getElementById('totalFuncoes').textContent = `${funcoes.length} funções`;
 
             tbody.innerHTML = '';
