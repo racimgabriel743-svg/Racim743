@@ -378,46 +378,83 @@ module.exports = async function handler(req, res) {
     console.log(`[RESUMO-BASE] Registros ignorados: ${registrosIgnorados}`);
     console.log(`[RESUMO-BASE] Total de linhas: ${rowsBase.length}`);
 
-    // ===== ORDENAÇÃO ALFABÉTICA =====
+    // ===== ORDENAÇÃO ALFABÉTICA DEFINITIVA =====
 
-    // Função auxiliar para ordenar textos corretamente
-    function ordenarTexto(a, b) {
-      const textoA = String(a || '').trim();
-      const textoB = String(b || '').trim();
-
-      return textoA.localeCompare(textoB, 'pt-BR', {
+    // Normaliza o texto antes da comparação.
+    // Isso evita que acentos, espaços extras,
+    // maiúsculas/minúsculas ou caracteres especiais
+    // interfiram na ordenação.
+    function chaveOrdenacao(valor) {
+      return String(valor || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim()
+        .toUpperCase();
+    }
+    
+    function compararAlfabetico(a, b) {
+      const nomeA = chaveOrdenacao(a);
+      const nomeB = chaveOrdenacao(b);
+    
+      return nomeA.localeCompare(nomeB, 'pt-BR', {
         sensitivity: 'base',
         numeric: false,
         ignorePunctuation: true
       });
     }
-
-    // Ordena colaboradores dentro de cada supervisor
+        
+    // =====================================================
+    // ORDENA COLABORADORES POR NOME
+    // =====================================================
+    
     Object.values(resumoPorSupervisor).forEach(supervisor => {
       supervisor.colaboradores.sort((a, b) => {
-        return ordenarTexto(a.nome, b.nome);
+        return compararAlfabetico(a.nome, b.nome);
       });
     });
-
-    // Ordena colaboradores dentro de cada função
+    
     Object.values(resumoPorFuncao).forEach(funcao => {
       funcao.colaboradores.sort((a, b) => {
-        return ordenarTexto(a.nome, b.nome);
+        return compararAlfabetico(a.nome, b.nome);
       });
     });
-  
-    // Ordena os supervisores alfabeticamente
+
+    // =====================================================
+    // ORDENA SUPERVISORES
+    // =====================================================
+    
     const supervisores = Object.values(resumoPorSupervisor)
       .sort((a, b) => {
-        return ordenarTexto(a.supervisor, b.supervisor);
+        return compararAlfabetico(a.supervisor, b.supervisor);
       });
-
-    // Ordena as funções alfabeticamente
+    
+    // =====================================================
+    // ORDENA FUNÇÕES
+    // =====================================================
+    
     const funcoes = Object.values(resumoPorFuncao)
       .sort((a, b) => {
-        return ordenarTexto(a.funcao, b.funcao);
+        return compararAlfabetico(a.funcao, b.funcao);
       });
+    
+    // =====================================================
+    // SEGURANÇA EXTRA:
+    // GARANTE A ORDEM DOS COLABORADORES
+    // DEPOIS DA ORDENAÇÃO DOS GRUPOS
+    // =====================================================
+    
+    supervisores.forEach(supervisor => {
+      supervisor.colaboradores.sort((a, b) => {
+        return compararAlfabetico(a.nome, b.nome);
+      });
+    });
 
+    funcoes.forEach(funcao => {
+      funcao.colaboradores.sort((a, b) => {
+        return compararAlfabetico(a.nome, b.nome);
+      });
+    });
+    
     // Calcula percentuais no resumo geral
     if (resumoGeral.total > 0) {
       resumoGeral.percentualPresente = ((resumoGeral.presente / resumoGeral.total) * 100).toFixed(1);
