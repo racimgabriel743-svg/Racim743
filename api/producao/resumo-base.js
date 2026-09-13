@@ -387,6 +387,12 @@ module.exports = async function handler(req, res) {
 
      const Nome = Object.values(resumoPorSupervisor)
       .sort((a, b) => a.Supervisor.localeCompare(b.colaboradores));
+
+     const Colaboradores = Object.values(resumoPorSupervisor)
+      .sort((a, b) => a.colaboradores.localeCompare(b.colaboradores));    
+
+     const Nome = Object.values(resumoPorSupervisor)
+      .sort((a, b) => a.colaboradores.localeCompare(b.colaboradores));     
     
     // Calcula percentuais no resumo geral
     if (resumoGeral.total > 0) {
