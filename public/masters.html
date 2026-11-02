@@ -406,6 +406,15 @@
       .catch(function (e) { falha(e && e.message ? e.message : e); });
   }
 
+  // Nome do arquivo: TITULO_dd-mm-hh-mm (ex.: MASTERS_-_LOJAS_COMPER_02-11-15-23)
+  function nomeArquivo(ext) {
+    var d = new Date();
+    function p(n) { return (n < 10 ? '0' : '') + n; }
+    var carimbo = p(d.getDate()) + '-' + p(d.getMonth() + 1) + '-' + p(d.getHours()) + '-' + p(d.getMinutes());
+    var base = atual.titulo.replace(/[^\w\-]+/g, '_').replace(/^_+|_+$/g, '');
+    return base + '_' + carimbo + '.' + ext;
+  }
+
   // ===== Imprimir =====
   function imprimir() {
     if (!atual) { alert('Escolha uma loja ou faça uma busca antes de imprimir.'); return; }
