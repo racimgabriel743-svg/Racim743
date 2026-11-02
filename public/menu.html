@@ -278,6 +278,7 @@
                 'Coletores': 'fas fa-mobile-alt',
                 'Balanca': 'fas fa-mobile-alt',
                 'Resumo equipamentos': 'fas fa-mobile-alt',
+                'Masters': 'fas fa-pallet',
                 'default': 'fas fa-building'
             };
             
@@ -345,7 +346,9 @@
                 const areaLower = areaSelecionada.toLowerCase();
                 
                 // Áreas com acesso direto (ferramentas específicas)
-                if (areaLower.includes('qlp')) {
+                if (areaLower.includes('masters')) {
+                    window.location.href = '/masters';
+                } else if (areaLower.includes('qlp')) {
                     window.location.href = '/qlp';
                 } else if (areaLower.includes('mapa de carga')) {
                     window.location.href = '/mapacarga';
