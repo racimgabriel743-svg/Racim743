@@ -631,12 +631,27 @@
                 console.log('[RESUMO] URL final:', url);
 
                 const response = await fetch(url);
-                const result = await response.json();
+                const responseText = await response.text();
 
+                // Lê a resposta com segurança, inclusive quando a API retorna HTTP 500
+                let result;
+                try {
+                    result = responseText ? JSON.parse(responseText) : {};
+                } catch (parseError) {
+                    console.error('[RESUMO] A API não retornou JSON válido:', responseText);
+                    throw new Error(
+                        `A API retornou uma resposta inválida (HTTP ${response.status}). ` +
+                        'Verifique os logs da função no Netlify.'
+                    );
+                }
+
+                console.log('[RESUMO] Status HTTP:', response.status);
                 console.log('[RESUMO] Resposta recebida:', result);
 
-                if (!result.ok) {
-                    throw new Error(result.msg || 'Erro ao carregar resumo');
+                if (!response.ok || result.ok !== true) {
+                    const detalhe = result.details || result.msg || 'Erro desconhecido ao gerar dados';
+                    console.error('[RESUMO] Detalhes enviados pela API:', detalhe);
+                    throw new Error(`${detalhe} (HTTP ${response.status})`);
                 }
 
                 // Mostra informações de debug
@@ -1142,7 +1157,8 @@
             const ano = hoje.getFullYear();
             const mes = String(hoje.getMonth() + 1).padStart(2, '0');
             const dia = String(hoje.getDate()).padStart(2, '0');
-            const dataHoje = `${dia}-${mes}-${ano}`;
+            // Campos <input type="date"> exigem o formato ISO: YYYY-MM-DD
+            const dataHoje = `${ano}-${mes}-${dia}`;
             
             document.getElementById('filtroData').value = dataHoje;
             console.log('[RESUMO] Data inicial definida:', dataHoje);
