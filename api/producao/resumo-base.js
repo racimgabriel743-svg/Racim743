@@ -59,8 +59,8 @@ module.exports = async function handler(req, res) {
     
     if (req.query.data) {
       // Se veio data do frontend (formato YYYY-MM-DD)
-      const [dia, mes, ano] = req.query.data.split('-');
-      dataFiltro = `${ano}/${mes}/${dia}`;
+      const [ano, mes, dia] = req.query.data.split('-');
+      dataFiltro = `${dia}/${mes}/${ano}`;
       console.log(`[RESUMO-BASE] Data do query: ${req.query.data} -> ${dataFiltro}`);
     } else {
       // Usa data de hoje
