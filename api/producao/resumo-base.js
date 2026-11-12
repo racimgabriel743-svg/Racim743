@@ -386,10 +386,34 @@ module.exports = async function handler(req, res) {
     const funcoes = Object.values(resumoPorFuncao)
       .sort((a, b) => a.funcao.localeCompare(b.funcao));
 
-    // Cria uma lista com todos os colaboradores e ordena alfabeticamente
-    const nomes = Object.values(resumoPorSupervisor)
-      .flatMap(item => item.colaboradores)
-      .sort((a, b) => a.localeCompare(b));
+    // ===== ORDENA COLABORADORES ALFABETICAMENTE =====
+
+    // Ordena colaboradores dentro de cada supervisor
+    supervisores.forEach(item => {
+      item.colaboradores.sort((a, b) =>
+        String(a.nome || '').localeCompare(
+          String(b.nome || ''),
+          'pt-BR',
+          { sensitivity: 'base' }
+        )
+      );
+    });
+
+    // Ordena colaboradores dentro de cada função
+    funcoes.forEach(item => {
+      item.colaboradores.sort((a, b) =>
+        String(a.nome || '').localeCompare(
+          String(b.nome || ''),
+          'pt-BR',
+          { sensitivity: 'base' }
+        )
+      );
+    });
+    
+    // Cria uma lista com todos os colaboradores e ordena alfabeticamente --- aqui ---
+    //const nomes = Object.values(resumoPorSupervisor)
+      //.flatMap(item => item.colaboradores)
+      //.sort((a, b) => a.localeCompare(b)); // ---- até aqui ----
 
     // Calcula percentuais no resumo geral
     if (resumoGeral.total > 0) {
